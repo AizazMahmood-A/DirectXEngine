@@ -9,8 +9,6 @@
 #include "d3dclass.h"
 #include "CameraClass.h"
 #include "ModelClass.h"
-//#include "ColorShaderClass.h"
-//#include "TextureShaderClass.h"
 #include "LightShaderClass.h"
 #include "lightClass.h"
 
@@ -46,6 +44,9 @@ private:
 	//ColorShaderClass* m_ColorShader;
 	LightShaderClass* m_LightShader;
 	LightClass* m_Light;
+
+	ModelClass** m_Models;
+	size_t m_modelCount;
 };
 
 #endif

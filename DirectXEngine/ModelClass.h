@@ -10,6 +10,10 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include <fstream>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <vector>
 using namespace DirectX;
 using namespace std;
 
@@ -52,6 +56,13 @@ public:
 
 	ID3D11ShaderResourceView* GetTexture();
 
+	void ApplyTransformations(XMMATRIX translation, XMMATRIX scale, float rotation);
+	XMMATRIX GetTransform();
+
+	XMMATRIX GetPosition();
+	XMMATRIX GetScale();
+	float GetRotation();
+
 private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
@@ -61,6 +72,7 @@ private:
 	void ReleaseTexture();
 
 	bool LoadModel(char*);
+	bool LoadObjModel(char*);
 	void ReleaseModel();
 
 private:
@@ -69,6 +81,11 @@ private:
 	TextureClass* m_Texture;
 
 	ModelType* m_model;
+	unsigned long* m_modelIndices;
+
+	XMMATRIX m_position;
+	XMMATRIX m_scale;
+	float m_rotation;
 };
 
 #endif

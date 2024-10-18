@@ -1,2 +1,6 @@
 ﻿  Applicationclass.cpp
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(221,100): warning C4101: 'srMatrix': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(221,87): warning C4101: 'scaleMatrix': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(221,54): warning C4101: 'rotationMatrix': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(221,70): warning C4101: 'translateMatrix': unreferenced local variable
   DirectXEngine.vcxproj -> D:\Project Repos\DirectXEngine\x64\Debug\DirectXEngine.exe

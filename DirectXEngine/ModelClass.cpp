@@ -2,6 +2,9 @@
 // Filename: modelclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "ModelClass.h"
+#include <sstream>
+#include <algorithm>
+#include "Utils.h"
 
 ModelClass::ModelClass()
 {
@@ -9,6 +12,7 @@ ModelClass::ModelClass()
 	m_indexBuffer = 0;
 	m_Texture = 0;
 	m_model = 0;
+	m_modelIndices = 0;
 }
 
 ModelClass::ModelClass(const ModelClass& other)
@@ -26,8 +30,15 @@ bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	bool result;
 
 	// Load in the model data.
-	result = LoadModel(modelFilename);
-	if (!result)
+	if (Utils::hasExtension(modelFilename, "txt"))
+	{
+		result = LoadModel(modelFilename);
+	}
+	else if (Utils::hasExtension(modelFilename, "obj"))
+	{
+		result = LoadObjModel(modelFilename);
+	}
+	else
 	{
 		return false;
 	}
@@ -96,7 +107,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	// Create the index array.
 	indices = new unsigned long[m_indexCount];
 
-	// Load the vertex array and index array with data.
+	// Load the vertex array
 	for (i = 0; i < m_vertexCount; i++)
 	{
 		vertices[i].position = XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
@@ -104,6 +115,12 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		vertices[i].normal = XMFLOAT3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
 
 		indices[i] = i;
+	}
+
+	// Load Indicies array
+	for (i = 0; i < m_indexCount; i++)
+	{
+		indices[i] = m_modelIndices[i];
 	}
 
 	// Set up the description of the static vertex buffer.
@@ -254,6 +271,7 @@ bool ModelClass::LoadModel(char* filename)
 
 	// Create the model using vertex count that was read in.
 	m_model = new ModelType[m_vertexCount];
+	m_modelIndices = new unsigned long[m_indexCount];
 
 	// Read up to the beginning of the data.
 	fin.get(input);
@@ -272,18 +290,216 @@ bool ModelClass::LoadModel(char* filename)
 		fin >> m_model[i].nx >> m_model[i].ny >> m_model[i].nz;
 	}
 
+	for (i = 0; i < m_indexCount; i++)
+	{
+		m_modelIndices[i] = i;
+	}
+
 	// Close the model file.
 	fin.close();
 
 	return true;
 }
 
+bool ModelClass::LoadObjModel(char* filename)
+{
+	ifstream fin;
+	std::string line;
+
+	// Open the model file.
+	fin.open(filename);
+
+	// if it could not open the file then exit.
+	if (fin.fail())
+	{
+		return false;
+	}
+
+	// Parse Obj Model
+	struct Vector3
+	{
+		float x;
+		float y;
+		float z;
+	};
+
+	struct Vector2
+	{
+		float x;
+		float y;
+	};
+
+	std::vector<Vector3> vertices;
+	std::vector<Vector3> normals;
+	std::vector<Vector2> uvs;
+	std::vector<ModelType> models;
+	std::vector<unsigned long> indicies;
+
+	getline(fin, line);
+	getline(fin, line);
+	getline(fin, line);
+	getline(fin, line);
+	int index = 0;
+
+	while (getline(fin, line))
+	{
+		std::istringstream iss(line);
+		std::string prefix;
+		iss >> prefix;
+
+		if (prefix == "v") {  // Vertex position
+			Vector3 vec3;
+			iss >> vec3.x >> vec3.y >> vec3.z;
+			vertices.push_back(vec3);
+		}
+		else if (prefix == "vt") {  // Texture coordinates
+			Vector2 vec2;
+			iss >> vec2.x >> vec2.y;
+			uvs.push_back(vec2);
+		}
+		else if (prefix == "vn") {  // Normal vectors
+			Vector3 vec3;
+			iss >> vec3.x >> vec3.y >> vec3.z;
+			normals.push_back(vec3);
+		}
+		else if (prefix == "f") {	// Face Indicies
+			std::string faceString;
+			std::vector<Vector3> faces;
+
+			while (iss >> faceString) {
+				std::replace(faceString.begin(), faceString.end(), '/', ' ');
+				std::istringstream vtnStream(faceString);
+
+				Vector3 vec3;
+				vtnStream >> vec3.x >> vec3.y >> vec3.z;
+				vec3.x--, vec3.y--, vec3.z--;
+				faces.push_back(vec3);
+			}
+			std::reverse(faces.begin(), faces.end());
+			if (faces.size() == 3)
+			{
+				for (int i = 0; i < faces.size(); ++i) {
+					ModelType model;
+					Vector3 face = faces[i];
+
+					Vector3 vertex = vertices[(int)face.x];
+					Vector2 uv = uvs[(int)face.y];
+					Vector3 normal = normals[(int)face.z];
+
+					model.x = vertex.x;
+					model.y = vertex.y;
+					model.z = -vertex.z;
+
+					model.tu = uv.x;
+					model.tv = uv.y;
+
+					model.nx = normal.x;
+					model.ny = normal.y;
+					model.nz = -normal.z;
+
+					models.push_back(model);
+					indicies.push_back(index++);
+				}
+			}
+			else if (faces.size() == 4)
+			{
+				for (int i = 0; i < faces.size(); ++i) {
+					ModelType model;
+					Vector3 face = faces[i];
+
+					Vector3 vertex = vertices[(int)face.x];
+					Vector2 uv = uvs[(int)face.y];
+					Vector3 normal = normals[(int)face.z];
+
+					model.x = vertex.x;
+					model.y = vertex.y;
+					model.z = -vertex.z;
+
+					model.tu = uv.x;
+					model.tv = uv.y;
+
+					model.nx = normal.x;
+					model.ny = normal.y;
+					model.nz = -normal.z;
+
+					models.push_back(model);
+				}
+
+				indicies.push_back(index);
+				indicies.push_back(index + 1);
+				indicies.push_back(index + 2);
+
+				indicies.push_back(index);
+				indicies.push_back(index + 2);
+				indicies.push_back(index + 3);
+				index += 4;
+			}
+		}
+	}
+
+	// Set index count to be equal to vertex count.
+	m_vertexCount = models.size();
+	m_indexCount = indicies.size();
+
+	// Create the model using vertex count that was read in.
+	m_model = new ModelType[m_vertexCount];
+	m_modelIndices = new unsigned long[m_indexCount];
+
+	// Assign values to properties
+	for (int i = 0; i < m_vertexCount; i++)
+	{
+		m_model[i] = models[i];
+	}
+	for (int i = 0; i < m_indexCount; i++)
+	{
+		m_modelIndices[i] = indicies[i];
+	}
+
+	fin.close();
+	return true;
+}
+
+void ModelClass::ApplyTransformations(XMMATRIX translation, XMMATRIX scale, float rotation)
+{
+	m_position = translation;
+	m_scale = scale;;
+	m_rotation = rotation;
+}
+
+XMMATRIX ModelClass::GetTransform()
+{
+	XMMATRIX worldMatrix, srMatrix;
+	srMatrix = XMMatrixMultiply(m_scale, XMMatrixRotationY(m_rotation));
+	worldMatrix = XMMatrixMultiply(srMatrix, m_position);
+	return worldMatrix;
+}
+
+XMMATRIX ModelClass::GetPosition()
+{
+	return m_position;
+}
+
+XMMATRIX ModelClass::GetScale()
+{
+	return m_scale;
+}
+
+float ModelClass::GetRotation()
+{
+	return m_rotation;
+}
+
 void ModelClass::ReleaseModel()
 {
 	if (m_model)
 	{
-		delete [] m_model;
+		delete[] m_model;
 		m_model = 0;
+	}
+	if (m_modelIndices)
+	{
+		delete[] m_modelIndices;
+		m_modelIndices = 0;
 	}
 	return;
 }

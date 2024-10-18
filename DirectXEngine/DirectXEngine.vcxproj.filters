@@ -101,6 +101,9 @@
     <ClCompile Include="LightClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Utils.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="color.vs">
@@ -140,5 +143,16 @@
     <Text Include="cube.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="data\sphere.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="data\monkey.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+    <Object Include="data\monakey2.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
   </ItemGroup>
 </Project>
