@@ -1,6 +1,13 @@
+
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: light.ps
 ////////////////////////////////////////////////////////////////////////////////
+
+/////////////
+// DEFINES //
+/////////////
+#define NUM_LIGHTS 5
+
 
 /////////////
 // GLOBALS //
@@ -8,7 +15,7 @@
 Texture2D shaderTexture : register(t0);
 SamplerState SampleType : register(s0);
 
-cbuffer LightBuffer
+cbuffer LightBufferType : register(b0)
 {
     float4 ambientColor;
     float4 diffuseColor;
@@ -17,18 +24,63 @@ cbuffer LightBuffer
     float4 specularColor;
 };
 
+cbuffer LightColorBuffer : register(b1)
+{
+    float4 diffuseColors[NUM_LIGHTS];
+};
+
+
 
 //////////////
 // TYPEDEFS //
 //////////////
+
 struct PixelInputType
 {
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
     float3 viewDirection : TEXCOORD1;
+    float3 lightPos[NUM_LIGHTS] : TEXCOORD2;
 };
 
+float4 CalculateDirectionalLight(float3 direction, float3 normal, float3 viewDirection, float4 color, float4 specularColor, float specularPower)
+{
+    float3 lightDir = -normalize(direction); // light to surface direction
+    float NdotL = saturate(dot(normal, lightDir)); // dot product b/w normal and light dir
+
+    float4 diffuse = NdotL * color;
+
+    // specular calculation
+    // Calculate the reflection vector based on the light intensity, normal vector, light direction
+    float3 reflection = normalize(2.0f * NdotL * normal - lightDir);
+
+    // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
+    float4 specular = specularColor * pow(saturate(dot(reflection, viewDirection)), specularPower);
+
+    return diffuse + specular;
+}
+
+float remap(float value, float min1, float max1, float min2, float max2) {
+    return (value - min1) / (max1 - min1) * (max2 - min2) + min2;
+}
+
+float3 CalculatePointLight(float4 color, float3 lightPosition, float3 position, float3 normal, float3 viewDir) 
+{
+    float range = 5;
+    // Calculate vector from light to surface
+    float3 lightToPixel = lightPosition;
+    float distance = length(lightToPixel);
+
+    float3 lightDir = normalize(lightToPixel);
+    float att = (1 * 1 / (distance * distance + 1));
+
+    // diffuse
+    float NdotL = saturate(dot(normal, lightDir));
+    float3 diffuse = color * NdotL * att;
+    return diffuse;
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
@@ -36,47 +88,37 @@ struct PixelInputType
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
     float4 textureColor;
-    float3 lightDir;
-    float lightIntensity;
-    float4 color;
-    float3 reflection;
+
     float4 specular;
 
-    // Sample the pixel color from the texture using the sampler at this texture coordinate location.
+    float lightIntensity[NUM_LIGHTS];
+    float4 colorArray[NUM_LIGHTS];
+    float4 colorSum;
+    float4 color;
+    int i;
+
+
+    // Sample the texture pixel at this location.
     textureColor = shaderTexture.Sample(SampleType, input.tex);
 
     // Set the default output color to the ambient light value for all pixels.
     color = ambientColor;
 
     // Initialize the specular color.
-    specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    specular = CalculateDirectionalLight(lightDirection, input.normal, input.viewDirection, diffuseColor, specularColor, specularPower);
+    color += specular;
 
-    // Invert the light direction for calculations.
-    lightDir = -lightDirection;
+    // Initialize the sum of colors.
+    colorSum = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
-    // Calculate the amount of light on this pixel.
-    lightIntensity = saturate(dot(input.normal, lightDir));
-
-    if(lightIntensity > 0.0f)
+    for(i=0; i<NUM_LIGHTS; i++)
     {
-        // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-        color += (diffuseColor * lightIntensity);
-
-        // Saturate the ambient and diffuse color.
-        color = saturate(color);
-
-        // Calculate the reflection vector based on the light intensity, normal vector, light direction
-        reflection = normalize(2.0f * lightIntensity * input.normal - lightDir);
-
-        // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
-        specular = specularColor * pow(saturate(dot(reflection, input.viewDirection)), specularPower);
+        float3 pDiffuse = CalculatePointLight(diffuseColors[i], input.lightPos[i], input.position, input.normal, input.viewDirection);
+        colorSum = saturate(colorSum + float4(pDiffuse, 1.0f));
     }
-
-    // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-    color = color * textureColor;
-
-    // Add the specular component last to the output color.
-    color = saturate(color + specular);
+    color = saturate(color + colorSum) * textureColor;
 
     return color;
 }
+
+

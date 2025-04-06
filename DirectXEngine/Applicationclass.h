@@ -9,8 +9,16 @@
 #include "d3dclass.h"
 #include "CameraClass.h"
 #include "ModelClass.h"
+
 #include "LightShaderClass.h"
 #include "lightClass.h"
+
+#include "LightShaderClass.h"
+#include "lightClass.h"
+
+#include "TextureShaderClass.h"
+#include "SpriteClass.h"
+#include "timerclass.h"
 
 /////////////
 // GLOBALS //
@@ -41,12 +49,19 @@ private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
-	//ColorShaderClass* m_ColorShader;
+
+	TextureShaderClass* m_TextureShader;
+	SpriteClass* m_Sprite;
+	TimerClass* m_Timer;
+
 	LightShaderClass* m_LightShader;
-	LightClass* m_Light;
+	LightClass* m_DirectionalLight;
 
 	ModelClass** m_Models;
 	size_t m_modelCount;
+
+	LightClass* m_Lights;
+	int m_numLights;
 };
 
 #endif

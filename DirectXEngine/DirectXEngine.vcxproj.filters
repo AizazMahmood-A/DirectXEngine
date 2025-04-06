@@ -63,6 +63,12 @@
     <ClInclude Include="LightClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -104,6 +110,12 @@
     <ClCompile Include="Utils.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="color.vs">
@@ -138,12 +150,27 @@
     <Image Include="data\stone02.tga">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="data\sprite01.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\sprite02.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\sprite03.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\sprite04.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="cube.txt">
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="data\sphere.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="data\sprite_data_01.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

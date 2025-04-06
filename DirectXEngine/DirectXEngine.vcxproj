@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Applicationclass.cpp" />
+    <ClCompile Include="SpriteClass.cpp" />
     <ClCompile Include="CameraClass.cpp" />
     <ClCompile Include="ColorShaderClass.cpp" />
     <ClCompile Include="D3DClass.cpp" />
@@ -31,10 +32,12 @@
     <ClCompile Include="SystemClass.cpp" />
     <ClCompile Include="TextureClass.cpp" />
     <ClCompile Include="TextureShaderClass.cpp" />
+    <ClCompile Include="TimerClass.cpp" />
     <ClCompile Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Applicationclass.h" />
+    <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="CameraClass.h" />
     <ClInclude Include="ColorShaderClass.h" />
     <ClInclude Include="D3DClass.h" />
@@ -45,6 +48,7 @@
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="TextureClass.h" />
     <ClInclude Include="TextureShaderClass.h" />
+    <ClInclude Include="TimerClass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="color.ps" />
@@ -56,6 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\fern.tga" />
+    <Image Include="data\sprite01.tga" />
+    <Image Include="data\sprite02.tga" />
+    <Image Include="data\sprite03.tga" />
+    <Image Include="data\sprite04.tga" />
     <Image Include="data\stone02.tga" />
     <Image Include="data\stone01.tga" />
     <Image Include="pic8026.gif" />
@@ -63,6 +71,7 @@
   <ItemGroup>
     <Text Include="cube.txt" />
     <Text Include="data\sphere.txt" />
+    <Text Include="data\sprite_data_01.txt" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="data\monakey2.obj">

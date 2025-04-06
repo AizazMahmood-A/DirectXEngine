@@ -1,0 +1,6 @@
+4
+../DirectXEngine/data/sprite01.tga
+../DirectXEngine/data/sprite02.tga
+../DirectXEngine/data/sprite03.tga
+../DirectXEngine/data/sprite04.tga
+250
