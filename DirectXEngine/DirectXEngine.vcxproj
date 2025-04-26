@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Applicationclass.cpp" />
+    <ClCompile Include="FontClass.cpp" />
+    <ClCompile Include="FontShaderClass.cpp" />
     <ClCompile Include="SpriteClass.cpp" />
     <ClCompile Include="CameraClass.cpp" />
     <ClCompile Include="ColorShaderClass.cpp" />
@@ -30,6 +32,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ModelClass.cpp" />
     <ClCompile Include="SystemClass.cpp" />
+    <ClCompile Include="TextClass.cpp" />
     <ClCompile Include="TextureClass.cpp" />
     <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="TimerClass.cpp" />
@@ -37,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Applicationclass.h" />
+    <ClInclude Include="FontClass.h" />
+    <ClInclude Include="FontShaderClass.h" />
     <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="CameraClass.h" />
     <ClInclude Include="ColorShaderClass.h" />
@@ -46,6 +51,7 @@
     <ClInclude Include="LightShaderClass.h" />
     <ClInclude Include="ModelClass.h" />
     <ClInclude Include="systemclass.h" />
+    <ClInclude Include="TextClass.h" />
     <ClInclude Include="TextureClass.h" />
     <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="TimerClass.h" />
@@ -53,6 +59,8 @@
   <ItemGroup>
     <None Include="color.ps" />
     <None Include="color.vs" />
+    <None Include="font.ps" />
+    <None Include="font.vs" />
     <None Include="Light.ps" />
     <None Include="Light.vs" />
     <None Include="texture.ps" />
@@ -60,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\fern.tga" />
+    <Image Include="data\font\font01.tga" />
     <Image Include="data\sprite01.tga" />
     <Image Include="data\sprite02.tga" />
     <Image Include="data\sprite03.tga" />
@@ -70,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="cube.txt" />
+    <Text Include="data\font\font01.txt" />
     <Text Include="data\sphere.txt" />
     <Text Include="data\sprite_data_01.txt" />
   </ItemGroup>

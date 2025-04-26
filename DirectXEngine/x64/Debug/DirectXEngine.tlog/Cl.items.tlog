@@ -1,4 +1,6 @@
 D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\Applicationclass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\FontClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\FontClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\FontShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\FontShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\SpriteClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\SpriteClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\CameraClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\CameraClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ColorShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ColorShaderClass.obj
@@ -9,6 +11,7 @@ D:\Project Repos\DirectXEngine\DirectXEngine\LightShaderClass.cpp;D:\Project Rep
 D:\Project Repos\DirectXEngine\DirectXEngine\main.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\main.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ModelClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ModelClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\SystemClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\SystemClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\TextClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\TextClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\TextureClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\TextureClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\TextureShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\TextureShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\TimerClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\TimerClass.obj

@@ -9,6 +9,9 @@
 #include "d3dclass.h"
 #include "CameraClass.h"
 #include "ModelClass.h"
+#include "FontShaderClass.h"
+#include "FontClass.h"
+#include "TextClass.h"
 
 #include "LightShaderClass.h"
 #include "lightClass.h"
@@ -62,6 +65,10 @@ private:
 
 	LightClass* m_Lights;
 	int m_numLights;
+
+	FontShaderClass* m_FontShader;
+	FontClass* m_Font;
+	TextClass* m_TextString1, * m_TextString2;
 };
 
 #endif
