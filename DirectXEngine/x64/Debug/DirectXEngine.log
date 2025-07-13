@@ -1,12 +1,2 @@
-﻿  Applicationclass.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\format(42): warning STL4038: The contents of <format> are available only with C++20 or later.
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(49,7): warning C4101: 'modelFilename': unreferenced local variable
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(50,7): warning C4101: 'textureFilename': unreferenced local variable
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(396,100): warning C4101: 'srMatrix': unreferenced local variable
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(396,36): warning C4101: 'projectionMatrix': unreferenced local variable
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(396,87): warning C4101: 'scaleMatrix': unreferenced local variable
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(396,54): warning C4101: 'rotationMatrix': unreferenced local variable
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(396,24): warning C4101: 'viewMatrix': unreferenced local variable
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(396,11): warning C4101: 'worldMatrix': unreferenced local variable
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(396,70): warning C4101: 'translateMatrix': unreferenced local variable
+﻿  main.cpp
   DirectXEngine.vcxproj -> D:\Project Repos\DirectXEngine\x64\Debug\DirectXEngine.exe

@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
@@ -16,20 +12,24 @@
     <Filter Include="Header Files\System">
       <UniqueIdentifier>{cde39463-fb28-4dab-ac7a-cca60f9bb816}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\System">
-      <UniqueIdentifier>{4bc6af82-48b2-40d0-9cc7-27abcdce0f63}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{dfd82f3e-9cb9-4488-8531-5e4442cbeb24}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ShaderClasses">
-      <UniqueIdentifier>{188b01a9-e351-47cd-9c06-206b78d1b308}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\ShaderClasses">
       <UniqueIdentifier>{6118ce51-b6e3-4f33-beb4-1b67b425fdda}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files\font">
       <UniqueIdentifier>{fd6ba329-b4ef-44c0-bfa4-af7f8e79b034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\System">
+      <UniqueIdentifier>{4bc6af82-48b2-40d0-9cc7-27abcdce0f63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ShaderClasses">
+      <UniqueIdentifier>{188b01a9-e351-47cd-9c06-206b78d1b308}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +79,36 @@
       <Filter>Header Files\ShaderClasses</Filter>
     </ClInclude>
     <ClInclude Include="TextClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FPSClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultitextureShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="LightmapShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="AlphamapShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalMapShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecmapShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManagerClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FrustumClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelList.Class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -137,6 +167,36 @@
     <ClCompile Include="TextClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FPSClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MultitextureShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="LightmapShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="AlphamapShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalMapShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecmapShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManagerClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FrustumClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelListClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="color.vs">
@@ -161,6 +221,36 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="font.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Multitexture.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Multitexture.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Lightmap.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Lightmap.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Alphamap.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Alphamap.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Normalmap.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Normalmap.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Specmap.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Specmap.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -192,6 +282,24 @@
     <Image Include="data\font\font01.tga">
       <Filter>Resource Files\font</Filter>
     </Image>
+    <Image Include="data\dirt01.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\light01.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\alpha01.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\normal01.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\normal02.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="data\spec02.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="cube.txt">
@@ -205,6 +313,9 @@
     </Text>
     <Text Include="data\font\font01.txt">
       <Filter>Resource Files\font</Filter>
+    </Text>
+    <Text Include="data\square.txt">
+      <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>

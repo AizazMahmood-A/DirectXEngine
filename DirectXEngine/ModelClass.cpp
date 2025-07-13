@@ -10,7 +10,7 @@ ModelClass::ModelClass()
 {
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
-	m_Texture = 0;
+	m_Textures = 0;
 	m_model = 0;
 	m_modelIndices = 0;
 }
@@ -25,7 +25,7 @@ ModelClass::~ModelClass()
 
 }
 
-bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename)
+bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* textureFilename3)
 {
 	bool result;
 
@@ -43,6 +43,9 @@ bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 		return false;
 	}
 
+	// Calculate the tangent and binormal vectors for the model.
+	CalculateModelVectors();
+
 	// Initialize the vertex and index buffer.
 	result = InitializeBuffers(device);
 	if (!result)
@@ -51,7 +54,7 @@ bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Load the texture for this model.
-	result = LoadTexture(device, deviceContext, textureFilename);
+	result = LoadTexture(device, deviceContext, textureFilename1, textureFilename2, textureFilename3);
 	if (!result)
 	{
 		return false;
@@ -63,7 +66,7 @@ bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 void ModelClass::Shutdown()
 {
 	// Release the model texture.
-	ReleaseTexture();
+	ReleaseTextures();
 
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
@@ -87,9 +90,9 @@ int ModelClass::GetIndexCount()
 	return m_indexCount;
 }
 
-ID3D11ShaderResourceView* ModelClass::GetTexture()
+ID3D11ShaderResourceView* ModelClass::GetTexture(int index)
 {
-	return m_Texture->GetTexture();
+	return m_Textures[index].GetTexture();
 }
 
 bool ModelClass::InitializeBuffers(ID3D11Device* device)
@@ -113,6 +116,8 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		vertices[i].position = XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
 		vertices[i].texture = XMFLOAT2(m_model[i].tu, m_model[i].tv);
 		vertices[i].normal = XMFLOAT3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
+		vertices[i].tangent = XMFLOAT3(m_model[i].tx, m_model[i].ty, m_model[i].tz);
+		vertices[i].binormal = XMFLOAT3(m_model[i].bx, m_model[i].by, m_model[i].bz);
 
 		indices[i] = i;
 	}
@@ -213,14 +218,26 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
-bool ModelClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+bool ModelClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3)
 {
 	bool result;
 
 	// Create and initialize the texture object.
-	m_Texture = new TextureClass;
+	m_Textures = new TextureClass[3];
 
-	result = m_Texture->Initialize(device, deviceContext, filename);
+	result = m_Textures[0].Initialize(device, deviceContext, filename1);
+	if (!result)
+	{
+		return false;
+	}
+
+	result = m_Textures[1].Initialize(device, deviceContext, filename2);
+	if (!result)
+	{
+		return false;
+	}
+
+	result = m_Textures[2].Initialize(device, deviceContext, filename3);
 	if (!result)
 	{
 		return false;
@@ -229,14 +246,17 @@ bool ModelClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCo
 	return true;
 }
 
-void ModelClass::ReleaseTexture()
+void ModelClass::ReleaseTextures()
 {
-	// Release the texture object.
-	if (m_Texture)
+	// Release the texture object array.
+	if (m_Textures)
 	{
-		m_Texture->Shutdown();
-		delete m_Texture;
-		m_Texture = 0;
+		m_Textures[0].Shutdown();
+		m_Textures[1].Shutdown();
+		m_Textures[2].Shutdown();
+
+		delete[] m_Textures;
+		m_Textures = 0;
 	}
 	return;
 }
@@ -391,7 +411,7 @@ bool ModelClass::LoadObjModel(char* filename)
 					model.z = -vertex.z;
 
 					model.tu = uv.x;
-					model.tv = uv.y;
+					model.tv = 1.0f - uv.y;
 
 					model.nx = normal.x;
 					model.ny = normal.y;
@@ -457,6 +477,125 @@ bool ModelClass::LoadObjModel(char* filename)
 
 	fin.close();
 	return true;
+}
+
+void ModelClass::CalculateModelVectors()
+{
+	int faceCount, i, index;
+	TempVertexType vertex1, vertex2, vertex3;
+	VectorType tangent, binormal;
+
+	// Calculate the number of faces in the model.
+	faceCount = m_vertexCount / 3;
+
+	// Initialize the index to the model data.
+	index = 0;
+
+	// Go through all the faces and calculate the tangent and binormal vectors.
+	for (i = 0; i < faceCount; i++)
+	{
+		// Get the three vertices for this face from the model.
+		vertex1.x = m_model[index].x;
+		vertex1.y = m_model[index].y;
+		vertex1.z = m_model[index].z;
+		vertex1.tu = m_model[index].tu;
+		vertex1.tv = m_model[index].tv;
+		index++;
+
+		vertex2.x = m_model[index].x;
+		vertex2.y = m_model[index].y;
+		vertex2.z = m_model[index].z;
+		vertex2.tu = m_model[index].tu;
+		vertex2.tv = m_model[index].tv;
+		index++;
+
+		vertex3.x = m_model[index].x;
+		vertex3.y = m_model[index].y;
+		vertex3.z = m_model[index].z;
+		vertex3.tu = m_model[index].tu;
+		vertex3.tv = m_model[index].tv;
+		index++;
+
+		// Calculate the tangent and binormal of that face.
+		CalculateTangentBinormal(vertex1, vertex2, vertex3, tangent, binormal);
+
+		// Store the tangent and binormal for this face back in the model structure.
+		m_model[index - 1].tx = tangent.x;
+		m_model[index - 1].ty = tangent.y;
+		m_model[index - 1].tz = tangent.z;
+		m_model[index - 1].bx = binormal.x;
+		m_model[index - 1].by = binormal.y;
+		m_model[index - 1].bz = binormal.z;
+
+		m_model[index - 2].tx = tangent.x;
+		m_model[index - 2].ty = tangent.y;
+		m_model[index - 2].tz = tangent.z;
+		m_model[index - 2].bx = binormal.x;
+		m_model[index - 2].by = binormal.y;
+		m_model[index - 2].bz = binormal.z;
+
+		m_model[index - 3].tx = tangent.x;
+		m_model[index - 3].ty = tangent.y;
+		m_model[index - 3].tz = tangent.z;
+		m_model[index - 3].bx = binormal.x;
+		m_model[index - 3].by = binormal.y;
+		m_model[index - 3].bz = binormal.z;
+	}
+	return;
+}
+
+void ModelClass::CalculateTangentBinormal(TempVertexType vertex1, TempVertexType vertex2, TempVertexType vertex3, VectorType& tangent, VectorType& binormal)
+{
+	float vector1[3], vector2[3];
+	float tuVector[2], tvVector[2];
+	float den;
+	float length;
+
+	// Calculate the two vectors for this face.
+	vector1[0] = vertex2.x - vertex1.x;
+	vector1[1] = vertex2.y - vertex1.y;
+	vector1[2] = vertex2.z - vertex1.z;
+
+	vector2[0] = vertex3.x - vertex1.x;
+	vector2[1] = vertex3.y - vertex1.y;
+	vector2[2] = vertex3.z - vertex1.z;
+
+	// Calculate the tu and tv texture space vectors.
+	tuVector[0] = vertex2.tu - vertex1.tu;
+	tvVector[0] = vertex2.tv - vertex1.tv;
+
+	tuVector[1] = vertex3.tu - vertex1.tu;
+	tvVector[1] = vertex3.tv - vertex1.tv;
+
+	// Calculate the denominator of the tangent/binormal equation.
+	den = 1.0f / (tuVector[0] * tvVector[1] - tuVector[1] * tvVector[0]);
+
+	// Calculate the cross products and multiply by the coefficient to get the tangent and binormal.
+	tangent.x = (tvVector[1] * vector1[0] - tvVector[0] * vector2[0]) * den;
+	tangent.y = (tvVector[1] * vector1[1] - tvVector[0] * vector2[1]) * den;
+	tangent.z = (tvVector[1] * vector1[2] - tvVector[0] * vector2[2]) * den;
+
+	binormal.x = (tuVector[0] * vector2[0] - tuVector[1] * vector1[0]) * den;
+	binormal.y = (tuVector[0] * vector2[1] - tuVector[1] * vector1[1]) * den;
+	binormal.z = (tuVector[0] * vector2[2] - tuVector[1] * vector1[2]) * den;
+
+	// Calculate the length of this normal.
+	length = sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+
+	// Normalize the normal and then store it
+	tangent.x = tangent.x / length;
+	tangent.y = tangent.y / length;
+	tangent.z = tangent.z / length;
+
+	// Calculate the length of this normal.
+	length = sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
+
+	// Normalize the normal and then store it
+	binormal.x = binormal.x / length;
+	binormal.y = binormal.y / length;
+	binormal.z = binormal.z / length;
+
+	return;
 }
 
 void ModelClass::ApplyTransformations(XMMATRIX translation, XMMATRIX scale, float rotation)

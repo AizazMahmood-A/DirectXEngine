@@ -19,9 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AlphamapShaderClass.cpp" />
     <ClCompile Include="Applicationclass.cpp" />
     <ClCompile Include="FontClass.cpp" />
     <ClCompile Include="FontShaderClass.cpp" />
+    <ClCompile Include="FPSClass.cpp" />
+    <ClCompile Include="FrustumClass.cpp" />
+    <ClCompile Include="LightmapShaderClass.cpp" />
+    <ClCompile Include="ModelListClass.cpp" />
+    <ClCompile Include="MultitextureShaderClass.cpp" />
+    <ClCompile Include="NormalMapShaderClass.cpp" />
+    <ClCompile Include="PositionClass.cpp" />
+    <ClCompile Include="ShaderManagerClass.cpp" />
+    <ClCompile Include="SpecmapShaderClass.cpp" />
     <ClCompile Include="SpriteClass.cpp" />
     <ClCompile Include="CameraClass.cpp" />
     <ClCompile Include="ColorShaderClass.cpp" />
@@ -39,9 +49,19 @@
     <ClCompile Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlphamapShaderClass.h" />
     <ClInclude Include="Applicationclass.h" />
     <ClInclude Include="FontClass.h" />
     <ClInclude Include="FontShaderClass.h" />
+    <ClInclude Include="FPSClass.h" />
+    <ClInclude Include="FrustumClass.h" />
+    <ClInclude Include="LightmapShaderClass.h" />
+    <ClInclude Include="ModelList.Class.h" />
+    <ClInclude Include="MultitextureShaderClass.h" />
+    <ClInclude Include="NormalMapShaderClass.h" />
+    <ClInclude Include="PositionClass.h" />
+    <ClInclude Include="ShaderManagerClass.h" />
+    <ClInclude Include="SpecmapShaderClass.h" />
     <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="CameraClass.h" />
     <ClInclude Include="ColorShaderClass.h" />
@@ -57,18 +77,34 @@
     <ClInclude Include="TimerClass.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Alphamap.ps" />
+    <None Include="Alphamap.vs" />
     <None Include="color.ps" />
     <None Include="color.vs" />
     <None Include="font.ps" />
     <None Include="font.vs" />
     <None Include="Light.ps" />
     <None Include="Light.vs" />
+    <None Include="Lightmap.ps" />
+    <None Include="Lightmap.vs" />
+    <None Include="Multitexture.ps" />
+    <None Include="Multitexture.vs" />
+    <None Include="Normalmap.ps" />
+    <None Include="Normalmap.vs" />
+    <None Include="Specmap.ps" />
+    <None Include="Specmap.vs" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="data\alpha01.tga" />
+    <Image Include="data\dirt01.tga" />
     <Image Include="data\fern.tga" />
     <Image Include="data\font\font01.tga" />
+    <Image Include="data\light01.tga" />
+    <Image Include="data\normal01.tga" />
+    <Image Include="data\normal02.tga" />
+    <Image Include="data\spec02.tga" />
     <Image Include="data\sprite01.tga" />
     <Image Include="data\sprite02.tga" />
     <Image Include="data\sprite03.tga" />
@@ -82,6 +118,7 @@
     <Text Include="data\font\font01.txt" />
     <Text Include="data\sphere.txt" />
     <Text Include="data\sprite_data_01.txt" />
+    <Text Include="data\square.txt" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="data\monakey2.obj">

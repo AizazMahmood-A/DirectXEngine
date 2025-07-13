@@ -1,0 +1,2 @@
+Name: NVIDIA GeForce RTX 4070
+Memory: 12011

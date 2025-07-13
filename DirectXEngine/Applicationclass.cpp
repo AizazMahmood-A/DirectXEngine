@@ -4,7 +4,7 @@
 #include <string.h>
 #include <format>
 //#define SingleModel
-#define MultiModel
+//#define MultiModel
 
 ApplicationClass::ApplicationClass()
 {
@@ -12,6 +12,12 @@ ApplicationClass::ApplicationClass()
 	m_Camera = 0;
 	m_Model = 0;
 	m_Models = 0;
+
+	//m_MultiTextureShader = 0;
+	//m_LightMapShader = 0;
+	//m_AlphaMapShader = 0;
+	//m_NormalMapShader = 0;
+	//m_SpecMapShader = 0;
 
 	m_TextureShader = 0;
 	m_Sprite = 0;
@@ -27,8 +33,17 @@ ApplicationClass::ApplicationClass()
 
 	m_FontShader = 0;
 	m_Font = 0;
-	m_TextString1 = 0;
-	m_TextString2 = 0;
+
+	m_Fps = 0;
+	m_FpsString = 0;
+	m_MouseStrings = 0;
+
+	m_ShaderManager = 0;
+
+	m_RenderCountString = 0;
+	m_ModelList = 0;
+	m_Position = 0;
+	m_Frustum = 0;
 }
 
 
@@ -45,10 +60,12 @@ ApplicationClass::~ApplicationClass()
 
 bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
+	char fpsString[32];
 	char spriteFilename[128];
-	char modelFilename[128];
+	char modelFilename[128], textureFilename1[128], textureFilename2[128], textureFilename3[128];
 	char textureFilename[128];
-	char testString1[32], testString2[32];
+	char renderString[32];
+	char mouseString1[32], mouseString2[32], mouseString3[32];
 
 	bool result;
 
@@ -66,66 +83,10 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera = new CameraClass;
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 5.0f, -12.0f);
-	//m_Camera->SetRotation(20.0f, 0.0f, 0.0f);
-
-#ifdef SingleModel
-	// Set the file name of the model.
-	strcpy_s(modelFilename, "../DirectXEngine/data/monkey.obj");//"../DirectXEngine/data/cube.txt");
-
-	// Set the name of the texture file tha twe will be loading.
-	strcpy_s(textureFilename, "../DirectXEngine/data/stone01.tga");
-
-	// Create and initialize the model object.
-	m_Model = new ModelClass;
-
-	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
-#endif  // SingleModel
-
-#ifdef MultiModel
-	//const char* modelFilenames[1] = { "../DirectXEngine/data/plane.txt" }; //"../DirectXEngine/data/monkey.obj", "../DirectXEngine/data/cube.txt", "../DirectXEngine/data/sphere.txt",
-	//const char* textureFilenames[1] = { "../DirectXEngine/data/stone01.tga" }; //"../DirectXEngine/data/stone02.tga", "../DirectXEngine/data/stone01.tga", "../DirectXEngine/data/stone01.tga",
-
-	//m_modelCount = sizeof(modelFilenames) / sizeof(modelFilenames[0]);
-
-	//m_Models = new ModelClass * [m_modelCount];
-	//for (size_t i = 0; i < m_modelCount; i++)
-	//{
-	//	ModelClass* model = new ModelClass;
-
-	//	strcpy_s(modelFilename, modelFilenames[i]);
-	//	strcpy_s(textureFilename, textureFilenames[i]);
-
-
-	//	result = model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename);
-	//	model->ApplyTransformations(XMMatrixTranslation(0.0f, 0.0f, 0.0f),
-	//		XMMatrixScaling(1.0f, 1.0f, 1.0f), 0.0f);
-
-	//	if (!result)
-	//	{
-	//		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-	//		return false;
-	//	}
-
-	//	m_Models[i] = model;
-	//}
-
-#endif // MultiModel
-
-	// Create and initialize the light shader object.
-	m_LightShader = new LightShaderClass;
-
-	result = m_LightShader->Initialize(m_Direct3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
-		return false;
-	}
+	m_Camera->SetPosition(0.0f, 0.0f, -8.0f);
+	m_Camera->SetRotation(0.0f, 0.0f, 0.0f);
+	m_Camera->Render();
+	m_Camera->GetViewMatrix(m_baseViewMatrix);
 
 	// Create and initialize the light object.
 	m_DirectionalLight = new LightClass;
@@ -133,7 +94,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_DirectionalLight->SetAmbientColor(0.25f, 0.25f, 0.25f, 1.0f);
 	m_DirectionalLight->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	m_DirectionalLight->SetDirection(0.0f, 1.0f, 1.0f);
-	m_DirectionalLight->SetSpecularColor(0.75f, 0.75f, 0.75f, 1.0f);
+	m_DirectionalLight->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
 	m_DirectionalLight->SetSpecularPower(16.0f);
 
 	// Set the number of lights we will use.
@@ -145,15 +106,12 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Manually set the color and position of each light.
 	m_Lights[0].SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);  // Red
 	m_Lights[0].SetPosition(-3.0f, 1.0f, 3.0f);
-	//m_Lights[0].SetPosition(0.0f, 1.0f, 0.0f);
 
 	m_Lights[1].SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);  // Green
 	m_Lights[1].SetPosition(3.0f, 1.0f, 3.0f);
-	//m_Lights[1].SetPosition(0.0f, 1.0f, 0.0f);
 
 	m_Lights[2].SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);  // Blue
 	m_Lights[2].SetPosition(-3.0f, 1.0f, -3.0f);
-	//m_Lights[2].SetPosition(0.0f, 1.0f, 0.0f);
 
 	m_Lights[3].SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);  // White
 	m_Lights[3].SetPosition(3.0f, 1.0f, -3.0f);
@@ -161,22 +119,27 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Lights[4].SetDiffuseColor(0.5f, 0.0f, 0.5f, 1.0f);  // Purple
 	m_Lights[4].SetPosition(0.0f, 1.0f, 0.0f);
 
-	// Create and initialize the texture shader object.
-	m_TextureShader = new TextureShaderClass;
+	// Set the file name of the model.
+	strcpy_s(modelFilename, "../DirectXEngine/model.txt");//data/monkey.obj");
 
-	result = m_TextureShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	// Set the file name of the textures.
+	strcpy_s(textureFilename1, "../DirectXEngine/data/stone01.tga");
+	strcpy_s(textureFilename2, "../DirectXEngine/data/normal01.tga");
+	strcpy_s(textureFilename3, "../DirectXEngine/data/spec02.tga");
+
+	// Create and initialize the model object.
+	m_Model = new ModelClass;
+
+	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename1, textureFilename2, textureFilename3);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		return false;
 	}
 
-	// Set the sprite info file we will be using.
-	strcpy_s(spriteFilename, "../DirectXEngine/data/sprite_data_01.txt");
+	// Create and Initialize the normal map shader object.
+	m_ShaderManager = new ShaderManagerClass;
 
-	// Create and initialize the sprite object.
-	m_Sprite = new SpriteClass;
-
-	result = m_Sprite->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, spriteFilename, 50, 50);
+	result = m_ShaderManager->Initialize(m_Direct3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		return false;
@@ -210,26 +173,71 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Set the strings we want to display.
-	strcpy_s(testString1, "Hello");
-	strcpy_s(testString2, "Goodbye");
+	// Create and initialize the fps object.
+	m_Fps = new FPSClass();
 
-	// Create and initialize the first text object.
-	m_TextString1 = new TextClass;
-	result = m_TextString1->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, 32, m_Font, testString1, 10, 10, 0.0f, 1.0f, 0.0f);
+	m_Fps->Initialize();
+
+	// Set the initial fps and fps string.
+	m_previousFps = -1;
+	strcpy_s(fpsString, "Fps 0");
+
+	// Create and initialize the text object for the fps string.
+	m_FpsString = new TextClass();
+
+	result = m_FpsString->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, 32, m_Font, fpsString, 10, 10, 0.0f, 1.0f, 0.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	// Create and initialize the second text object.
-	m_TextString2 = new TextClass;
+	// Set the initial mouse string
+	strcpy_s(mouseString1, "Mouse X: 0");
+	strcpy_s(mouseString2, "Mouse Y: 0");
+	strcpy_s(mouseString3, "Mouse Button : No");
 
-	result = m_TextString2->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, 32, m_Font, testString2, 10, 50, 1.0f, 1.0f, 0.0f);
+	// Create and initialize the text object for the mouse string.
+	m_MouseStrings = new TextClass[3];
+
+	result = m_MouseStrings[0].Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, 32, m_Font, mouseString1, 10, 35, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
+
+	result = m_MouseStrings[1].Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, 32, m_Font, mouseString2, 10, 55, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	result = m_MouseStrings[2].Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, 32, m_Font, mouseString3, 10, 85, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Set the initial render count string.
+	strcpy_s(renderString, "Render Count: 0");
+
+	// Create and initialize the text object for the render count string.
+	m_RenderCountString = new TextClass;
+
+	result = m_RenderCountString->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, 32, m_Font, renderString, 10, 105, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Create and initialize the model list object.
+	m_ModelList = new ModelListClass;
+	m_ModelList->Initialize(25);
+
+	// Create the position class object.
+	m_Position = new PositionClass;
+
+	// Create the frustum class object.
+	m_Frustum = new FrustumClass;
 
 	return true;
 }
@@ -237,20 +245,75 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void ApplicationClass::Shutdown()
 {
-
-	// Release the text string objects.
-	if (m_TextString2)
+	// Release the frustum class object.
+	if (m_Frustum)
 	{
-		m_TextString2->Shutdown();
-		delete m_TextString2;
-		m_TextString2 = 0;
+		delete m_Frustum;
+		m_Frustum = 0;
 	}
 
-	if (m_TextString1)
+	// Release the position object.
+	if (m_Position)
 	{
-		m_TextString1->Shutdown();
-		delete m_TextString1;
-		m_TextString1 = 0;
+		delete m_Position;
+		m_Position = 0;
+	}
+
+	// Release the timer object.
+	if (m_Timer)
+	{
+		delete m_Timer;
+		m_Timer = 0;
+	}
+
+	// Release the model list object.
+	if (m_ModelList)
+	{
+		m_ModelList->Shutdown();
+		delete m_ModelList;
+		m_ModelList = 0;
+	}
+
+	// Release the text objects for the render count string.
+	if (m_RenderCountString)
+	{
+		m_RenderCountString->Shutdown();
+		delete m_RenderCountString;
+		m_RenderCountString = 0;
+	}
+
+	// Release the shader manager object.
+	if (m_ShaderManager)
+	{
+		m_ShaderManager->Shutdown();
+		delete m_ShaderManager;
+		m_ShaderManager = 0;
+	}
+
+	// Release the text objects for the mouse strings.
+	if (m_MouseStrings)
+	{
+		m_MouseStrings[0].Shutdown();
+		m_MouseStrings[1].Shutdown();
+		m_MouseStrings[2].Shutdown();
+
+		delete[] m_MouseStrings;
+		m_MouseStrings = 0;
+	}
+
+	// Release the text object for the fps string.
+	if (m_FpsString)
+	{
+		m_FpsString->Shutdown();
+		delete m_FpsString;
+		m_FpsString = 0;
+	}
+
+	// Release the fps object.
+	if (m_Fps)
+	{
+		delete m_Fps;
+		m_Fps = 0;
 	}
 
 	// Release the font object.
@@ -351,11 +414,32 @@ void ApplicationClass::Shutdown()
 }
 
 
-bool ApplicationClass::Frame()
+static float rotation = 360.0f;
+bool ApplicationClass::Frame(InputClass* Input)
 {
-	float frameTime;
-	//static float rotation = 0.0f;
-	bool result;
+	int mouseX, mouseY;
+	bool result, mouseDown, keyDown;
+
+	float frameTime, cameraRotationY;
+
+	// Check if the user pressed escape and wants to exit the application.
+	if (Input->IsEscapePressed())
+	{
+		return false;
+	}
+
+	// Get the location of the mouse from the input object.
+	Input->GetMouseLocation(mouseX, mouseY);
+
+	// Check if the mouse has been pressed.
+	mouseDown = Input->IsMousePressed();
+
+	// Update the mouse strings each frame.
+	result = UpdateMouseStrings(mouseX, mouseY, mouseDown);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Update the system stats.
 	m_Timer->Frame();
@@ -363,18 +447,39 @@ bool ApplicationClass::Frame()
 	// Get the current frame time.
 	frameTime = m_Timer->GetTime();
 
-	// Update the sprite object using the frame time.
-	m_Sprite->Update(frameTime);
+	// Update the frame per second each frame.
+	result = UpdateFPS();
+	if (!result)
+	{
+		return false;
+	}
 
-	// Update rotation variable each frame.
-	//rotation -= 0.0174532925f * 0.1f;
-	//if (rotation < 0.0f)
-	//{
-	//	rotation += 360.0f;
-	//}
+	// Set the frame time for calculating the updated position.
+	m_Position->SetFrameTime(m_Timer->GetTime());
+
+	// Check if the left or right arrow key has been presse, if so rotate the camera accordingly.
+	keyDown = Input->IsLeftArrowPressed();
+	m_Position->TurnLeft(keyDown);
+
+	keyDown = Input->IsRightArrowPressed();
+	m_Position->TurnRight(keyDown);
+
+	// Get the current view point rotation.
+	m_Position->GetRotation(cameraRotationY);
+
+	// Set the rotation of the camera.
+	m_Camera->SetRotation(0.0f, cameraRotationY, 0.0f);
+	m_Camera->Render();
+
+	// Update the rotation variable each frame.
+	rotation -= 0.0174532925f * 0.0025f;
+	if (rotation <= 0.0f)
+	{
+		rotation += 360.0f;
+	}
 
 	// Render the scene.
-	result = Render(frameTime);
+	result = Render();
 	if (!result)
 	{
 		return false;
@@ -391,15 +496,16 @@ XMMATRIX ApplyTransformations(XMMATRIX translation, XMMATRIX scale, XMMATRIX rot
 	return worldMatrix;
 }
 
-bool ApplicationClass::Render(float frameTime)
+bool ApplicationClass::Render()
 {
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, rotationMatrix, translateMatrix, scaleMatrix, srMatrix;
-	XMMATRIX UIWorldMatrix, UIViewMatrix, orthoMatrix;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix; // , rotationMatrix, translateMatrix, scaleMatrix, srMatrix;
+	XMMATRIX orthoMatrix;
 
 	XMFLOAT4 diffuseColors[5], lightPositions[5];
-	int i;
 
-	bool result;
+	int modelCount, renderCount, i;
+	float positionX, positionY, positionZ, radius;
+	bool renderModel, result;
 
 	// Clear the buffers to begin the scene.
 	m_Direct3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f);
@@ -408,13 +514,62 @@ bool ApplicationClass::Render(float frameTime)
 	m_Camera->Render();
 
 	// Get the world, view, projection matrices from the camera and d3d objects.
-	//m_Direct3D->GetWorldMatrix(worldMatrix);
-	//m_Camera->GetViewMatrix(viewMatrix);
-	//m_Direct3D->GetProjectionMatrix(projectionMatrix);
+	m_Direct3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_Direct3D->GetProjectionMatrix(projectionMatrix);
 
-	m_Direct3D->GetWorldMatrix(UIWorldMatrix);
-	m_Camera->GetViewMatrix(UIViewMatrix);
+	//m_Direct3D->GetWorldMatrix(UIWorldMatrix);
+	//m_Camera->GetViewMatrix(UIViewMatrix);
 	m_Direct3D->GetOrthoMatrix(orthoMatrix);
+
+	// Construct the frustum.
+	m_Frustum->ConstructFrustum(viewMatrix, projectionMatrix, SCREEN_DEPTH);
+
+	// Get the number of models that will be rendered.
+	modelCount = m_ModelList->GetModelCount();
+
+	// Initialize the count of models that have been rendered.
+	renderCount = 0;
+
+	// Go through all the models and render them only if they can be seen by the camera view.
+	for (i = 0; i < modelCount; i++)
+	{
+		// Get the position and color of the sphere model at this index.
+		m_ModelList->GetData(i, positionX, positionY, positionZ);
+
+		// Set the radius of the sphere to 1.0 since this is already known.
+		radius = 1.0f;
+
+		// Check if the sphere model is in the view frustum.
+		renderModel = m_Frustum->CheckCube(positionX, positionY, positionZ, radius);
+
+		// If it can be seen then render it, if not skip this model and check the next sphere.
+		if (renderModel)
+		{
+			// Move the model to the location it should be rendered at.
+			worldMatrix = XMMatrixTranslation(positionX, positionY, positionZ);
+
+			// Render the model using the light shader.
+			m_Model->Render(m_Direct3D->GetDeviceContext());
+
+			result = m_ShaderManager->RenderNormalMapShader(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+				m_Model->GetTexture(0), m_Model->GetTexture(1), m_DirectionalLight->GetDirection(), m_DirectionalLight->GetDiffuseColor());
+			if (!result)
+			{
+				return false;
+			}
+
+			// Since this model was rendered then increase the count for this frame.
+			renderCount++;
+		}
+	}
+
+	// Update the render count text.
+	result = UpdateRenderCountString(renderCount);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Get the light properties.
 	for (i = 0; i < m_numLights; i++)
@@ -426,78 +581,39 @@ bool ApplicationClass::Render(float frameTime)
 		lightPositions[i] = m_Lights[i].GetPosition();
 	}
 
-#ifdef SingleModel
-	// Apply transforms.
-	// Multiply them together to create the final world transformation matrix.
-	worldMatrix = ApplyTransformations(XMMatrixTranslation(-3.0f, 0.0f, 0.0f),
-		XMMatrixScaling(1.0f, 1.0f, 1.0f),
-		XMMatrixRotationY(rotation));
-
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_Model->Render(m_Direct3D->GetDeviceContext());
-
-	// Render the model using the color shader.
-	result = m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Model->GetTexture(),
-		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
-		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
-
-	if (!result)
-	{
-		return false;
-	}
-#endif // SingleModel
-
-#ifdef MultiModel
-	//for (size_t i = 0; i < m_modelCount; i++)
-	//{
-		//m_Models[i]->ApplyTransformations(m_Models[i]->GetPosition(), m_Models[i]->GetScale(), 0);
-	//	worldMatrix = m_Models[i]->GetTransform();
-
-		//m_Models[i]->Render(m_Direct3D->GetDeviceContext());
-	//	// Render the model using the color shader.
-	//	result = m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_Models[i]->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Models[i]->GetTexture(),
-	//		m_Camera, m_DirectionalLight, diffuseColors, lightPositions);
-
-	//	if (!result)
-	//	{
-	//		return false;
-	//	}
-	//}
-#endif // MultiModel
-
 	// Turn off the Z buffer to begin all 2D rendering and enable alpha blending.
 	m_Direct3D->TurnZBufferOff();
 	m_Direct3D->EnableAlphaBlending();
 
-	//// Put the sprite vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//result = m_Sprite->Render(m_Direct3D->GetDeviceContext());
-	//if (!result)
-	//{
-	//	return false;
-	//}
+	// Render the fps text string using the font shader.
+	m_FpsString->Render(m_Direct3D->GetDeviceContext());
 
-	//// Render the sprite with the texture shader.
-	//result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Sprite->GetIndexCount(), UIWorldMatrix, UIViewMatrix, orthoMatrix, m_Sprite->GetTexture());
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	// Render the first text string using the font shader.
-	m_TextString1->Render(m_Direct3D->GetDeviceContext());
-
-	result = m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_TextString1->GetIndexCount(), UIWorldMatrix, UIViewMatrix, orthoMatrix,
-		m_Font->GetTexture(), m_TextString1->GetPixelColor());
+	result = m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_FpsString->GetIndexCount(), worldMatrix, m_baseViewMatrix, orthoMatrix,
+		m_Font->GetTexture(), m_FpsString->GetPixelColor());
 	if (!result)
 	{
 		return false;
 	}
 
-	// Render the second text string using the font shader.
-	m_TextString2->Render(m_Direct3D->GetDeviceContext());
+	// Render the mouse text strings using the font shader.
+	for (i = 0; i < 3; i++)
+	{
+		m_MouseStrings[i].Render(m_Direct3D->GetDeviceContext());
 
-	result = m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_TextString2->GetIndexCount(), UIWorldMatrix, UIViewMatrix, orthoMatrix,
-		m_Font->GetTexture(), m_TextString2->GetPixelColor());
+		result = m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_MouseStrings[i].GetIndexCount(), worldMatrix, m_baseViewMatrix, orthoMatrix,
+			m_Font->GetTexture(), m_MouseStrings[i].GetPixelColor());
+
+		if (!result)
+		{
+			return false;
+		}
+	}
+
+	// Render the render count text string using the font shader.
+	m_RenderCountString->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_RenderCountString->GetIndexCount(), worldMatrix, m_baseViewMatrix, orthoMatrix,
+		m_Font->GetTexture(), m_RenderCountString->GetPixelColor());
 	if (!result)
 	{
 		return false;
@@ -509,6 +625,157 @@ bool ApplicationClass::Render(float frameTime)
 
 	// Present the rendered scene to the screen.
 	m_Direct3D->EndScene();
+
+	//std::cout << m_baseViewMatrix << std::endl;
+
+	return true;
+}
+
+
+bool ApplicationClass::UpdateRenderCountString(int renderCount)
+{
+	char tempString[16], finalString[32];
+	bool result;
+
+
+	// Convert the render count integer to string format.
+	sprintf_s(tempString, "%d", renderCount);
+
+	// Setup the render count string.
+	strcpy_s(finalString, "Render Count: ");
+	strcat_s(finalString, tempString);
+
+	// Update the sentence vertex buffer with the new string information.
+	result = m_RenderCountString->UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 105, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+bool ApplicationClass::UpdateMouseStrings(int mouseX, int mouseY, bool mouseDown)
+{
+	char tempString[16], finalString[32];
+	bool result;
+
+	// Convert the mouse X integer to string format.
+	sprintf_s(tempString, "%d", mouseX);
+
+	// Setup the mouse X string.
+	strcpy_s(finalString, "Mouse X: ");
+	strcat_s(finalString, tempString);
+
+	// Update the sentence vertex buffer with the new string information.
+	result = m_MouseStrings[0].UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 35, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Convert the mouse Y integer to string format.
+	sprintf_s(tempString, "%d", mouseY);
+
+	// Setup the mouse Y string.
+	strcpy_s(finalString, "Mouse Y: ");
+	strcat_s(finalString, tempString);
+
+	// Update the sentence vertex buffer with the new string information.
+	result = m_MouseStrings[1].UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 55, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Setup the mouse button string.
+	if (mouseDown)
+	{
+		strcpy_s(finalString, "Mouse Button: Yes");
+	}
+	else
+	{
+		strcpy_s(finalString, "Mouse Button: No");
+	}
+
+	// Update the sentence vertex buffer with the new string information.
+	result = m_MouseStrings[2].UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 85, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+
+}
+
+
+bool ApplicationClass::UpdateFPS()
+{
+	int fps;
+	char tempString[16], finalString[16];
+	float red, green, blue;
+	bool result;
+
+	//Update the fps each frame.
+	m_Fps->Frame();
+
+	// Get the current fps.
+	fps = m_Fps->GetFps();
+
+	// Check if the fps from the previous frame was the same, if so don't need to update the text string.
+	if (m_previousFps == fps)
+	{
+		return true;
+	}
+
+	// Store the fps for checking next frame.
+	m_previousFps = fps;
+
+	// Truncate the fps to below 100,000.
+	if (fps > 9999)
+	{
+		fps = 99999;
+	}
+
+	// Convert the fps integer to string format.
+	sprintf_s(tempString, "%d", fps);
+
+	// Setup the fps string.
+	strcpy_s(finalString, "Fps: ");
+	strcat_s(finalString, tempString);
+
+	// If fps is 60 or above set the fps color to green.
+	if (fps >= 60)
+	{
+		red = 0.0f;
+		green = 1.0f;
+		blue = 0.0f;
+	}
+
+	// If fps is below 60 set the fps color to yellow.
+	if (fps < 60)
+	{
+		red = 1.0f;
+		green = 1.0f;
+		blue = 0.0f;
+	}
+
+	// If fps is below 30 set the fps color to red.
+	if (fps < 30)
+	{
+		red = 1.0f;
+		green = 0.0f;
+		blue = 0.0f;
+	}
+
+	// Update the sentence vertex buffer with the new string information.
+	result = m_FpsString->UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 10, red, green, blue);
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }

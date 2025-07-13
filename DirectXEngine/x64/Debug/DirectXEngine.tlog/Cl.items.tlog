@@ -1,6 +1,16 @@
+D:\Project Repos\DirectXEngine\DirectXEngine\AlphamapShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\AlphamapShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\Applicationclass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\FontClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\FontClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\FontShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\FontShaderClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\FPSClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\FPSClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\FrustumClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\FrustumClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\LightmapShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\LightmapShaderClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\ModelListClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ModelListClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\MultitextureShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\MultitextureShaderClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\NormalMapShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\NormalMapShaderClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\PositionClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\PositionClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\ShaderManagerClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ShaderManagerClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\SpecmapShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\SpecmapShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\SpriteClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\SpriteClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\CameraClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\CameraClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ColorShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ColorShaderClass.obj
