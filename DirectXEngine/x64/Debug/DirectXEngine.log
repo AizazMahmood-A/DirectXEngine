@@ -1,2 +1,5 @@
-﻿  main.cpp
+﻿  Applicationclass.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\format(42): warning STL4038: The contents of <format> are available only with C++20 or later.
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(69,7): warning C4101: 'textureFilename': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(67,7): warning C4101: 'spriteFilename': unreferenced local variable
   DirectXEngine.vcxproj -> D:\Project Repos\DirectXEngine\x64\Debug\DirectXEngine.exe
