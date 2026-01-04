@@ -6,7 +6,9 @@
 PositionClass::PositionClass()
 {
 	m_frameTime = 0.0f;
+	m_rotationX = 0.0f;
 	m_rotationY = 0.0f;
+	m_rotationZ = 0.0f;
 	m_leftTurnSpeed = 0.0f;
 	m_rightTurnSpeed = 0.0f;
 }
@@ -27,9 +29,21 @@ void PositionClass::SetFrameTime(float time)
 	return;
 }
 
-void PositionClass::GetRotation(float& y)
+void PositionClass::GetRotationX(float& x)
+{
+	x = m_rotationX;
+	return;
+}
+
+void PositionClass::GetRotationY(float& y)
 {
 	y = m_rotationY;
+	return;
+}
+
+void PositionClass::GetRotationZ(float& z)
+{
+	z = m_rotationZ;
 	return;
 }
 

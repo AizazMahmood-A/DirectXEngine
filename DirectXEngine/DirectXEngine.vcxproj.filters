@@ -114,6 +114,51 @@
     <ClInclude Include="RenderTextureClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FogShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="ClipPlaneShaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TranslateShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="TransparentShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="RefractionShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="GlassShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystemClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectionShaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewpointClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="LightData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -150,9 +195,6 @@
       <Filter>Source Files\ShaderClasses</Filter>
     </ClCompile>
     <ClCompile Include="LightClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpriteClass.cpp">
@@ -209,6 +251,54 @@
     <ClCompile Include="DisplayPlaneClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FogShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClipPlaneShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TranslateShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="TransparentShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReflectionShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.h">
+      <Filter>Header Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="RefractionShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="GlassShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystemClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectionShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewpointClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="LightData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="color.vs">
@@ -263,6 +353,78 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Specmap.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Fog.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Fog.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Clipplane.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Clipplane.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Translate.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Translate.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Transparent.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Transparent.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Reflection.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Reflection.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Water.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Water.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Refraction.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Refraction.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Glass.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Glass.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Depth.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Depth.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Particle.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Particle.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Projection.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Projection.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shadow.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shadow.ps">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

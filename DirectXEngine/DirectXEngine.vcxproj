@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,19 +21,30 @@
   <ItemGroup>
     <ClCompile Include="AlphamapShaderClass.cpp" />
     <ClCompile Include="Applicationclass.cpp" />
+    <ClCompile Include="ClipPlaneShaderClass.cpp" />
+    <ClCompile Include="DepthShaderClass.cpp" />
     <ClCompile Include="DisplayPlaneClass.cpp" />
     <ClCompile Include="DisplayPlaneClass.h" />
+    <ClCompile Include="FogShaderClass.cpp" />
     <ClCompile Include="FontClass.cpp" />
     <ClCompile Include="FontShaderClass.cpp" />
     <ClCompile Include="FPSClass.cpp" />
     <ClCompile Include="FrustumClass.cpp" />
+    <ClCompile Include="GlassShaderClass.cpp" />
+    <ClCompile Include="LightData.cpp" />
     <ClCompile Include="LightmapShaderClass.cpp" />
     <ClCompile Include="ModelListClass.cpp" />
     <ClCompile Include="MultitextureShaderClass.cpp" />
     <ClCompile Include="NormalMapShaderClass.cpp" />
+    <ClCompile Include="ParticleShaderClass.cpp" />
+    <ClCompile Include="ParticleSystemClass.cpp" />
     <ClCompile Include="PositionClass.cpp" />
+    <ClCompile Include="ProjectionShaderClass.cpp" />
+    <ClCompile Include="ReflectionShaderClass.cpp" />
+    <ClCompile Include="RefractionShaderClass.cpp" />
     <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="ShaderManagerClass.cpp" />
+    <ClCompile Include="ShadowShaderClass.cpp" />
     <ClCompile Include="SpecmapShaderClass.cpp" />
     <ClCompile Include="SpriteClass.cpp" />
     <ClCompile Include="CameraClass.cpp" />
@@ -49,22 +60,37 @@
     <ClCompile Include="TextureClass.cpp" />
     <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="TimerClass.cpp" />
+    <ClCompile Include="TranslateShaderClass.cpp" />
+    <ClCompile Include="TransparentShaderClass.cpp" />
     <ClCompile Include="Utils.h" />
+    <ClCompile Include="ViewpointClass.cpp" />
+    <ClCompile Include="WaterShaderClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlphamapShaderClass.h" />
     <ClInclude Include="Applicationclass.h" />
+    <ClInclude Include="ClipPlaneShaderClass.h" />
+    <ClInclude Include="DepthShaderClass.h" />
+    <ClInclude Include="FogShaderClass.h" />
     <ClInclude Include="FontClass.h" />
     <ClInclude Include="FontShaderClass.h" />
     <ClInclude Include="FPSClass.h" />
     <ClInclude Include="FrustumClass.h" />
+    <ClInclude Include="GlassShaderClass.h" />
+    <ClInclude Include="LightData.h" />
     <ClInclude Include="LightmapShaderClass.h" />
     <ClInclude Include="ModelList.Class.h" />
     <ClInclude Include="MultitextureShaderClass.h" />
     <ClInclude Include="NormalMapShaderClass.h" />
+    <ClInclude Include="ParticleShaderClass.h" />
+    <ClInclude Include="ParticleSystemClass.h" />
     <ClInclude Include="PositionClass.h" />
+    <ClInclude Include="ProjectionShaderClass.h" />
+    <ClInclude Include="ReflectionShaderClass.h" />
+    <ClInclude Include="RefractionShaderClass.h" />
     <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="ShaderManagerClass.h" />
+    <ClInclude Include="ShadowShaderClass.h" />
     <ClInclude Include="SpecmapShaderClass.h" />
     <ClInclude Include="SpriteClass.h" />
     <ClInclude Include="CameraClass.h" />
@@ -79,14 +105,26 @@
     <ClInclude Include="TextureClass.h" />
     <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="TimerClass.h" />
+    <ClInclude Include="TranslateShaderClass.h" />
+    <ClInclude Include="TransparentShaderClass.h" />
+    <ClInclude Include="ViewpointClass.h" />
+    <ClInclude Include="WaterShaderClass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Alphamap.ps" />
     <None Include="Alphamap.vs" />
+    <None Include="Clipplane.ps" />
+    <None Include="Clipplane.vs" />
     <None Include="color.ps" />
     <None Include="color.vs" />
+    <None Include="Depth.ps" />
+    <None Include="Depth.vs" />
+    <None Include="Fog.ps" />
+    <None Include="Fog.vs" />
     <None Include="font.ps" />
     <None Include="font.vs" />
+    <None Include="Glass.ps" />
+    <None Include="Glass.vs" />
     <None Include="Light.ps" />
     <None Include="Light.vs" />
     <None Include="Lightmap.ps" />
@@ -95,10 +133,26 @@
     <None Include="Multitexture.vs" />
     <None Include="Normalmap.ps" />
     <None Include="Normalmap.vs" />
+    <None Include="Particle.ps" />
+    <None Include="Particle.vs" />
+    <None Include="Projection.ps" />
+    <None Include="Projection.vs" />
+    <None Include="Reflection.ps" />
+    <None Include="Reflection.vs" />
+    <None Include="Refraction.ps" />
+    <None Include="Refraction.vs" />
+    <None Include="Shadow.ps" />
+    <None Include="Shadow.vs" />
     <None Include="Specmap.ps" />
     <None Include="Specmap.vs" />
     <None Include="texture.ps" />
     <None Include="texture.vs" />
+    <None Include="Translate.ps" />
+    <None Include="Translate.vs" />
+    <None Include="Transparent.ps" />
+    <None Include="Transparent.vs" />
+    <None Include="Water.ps" />
+    <None Include="Water.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\alpha01.tga" />
