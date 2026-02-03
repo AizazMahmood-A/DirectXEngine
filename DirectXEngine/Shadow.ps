@@ -11,6 +11,7 @@ Texture2D shaderTexture : register(t0);
 Texture2D depthMapTexture : register(t1);
 Texture2D depthMapTexture2 : register(t2);
 Texture2D depthMapTexture3 : register(t3);
+Texture2D directionalDepthMap : register(t4);
 
 SamplerState SampleTypeClamp : register(s0);
 SamplerState SampleTypeWrap : register(s1);
@@ -21,15 +22,17 @@ SamplerState SampleTypeWrap : register(s1);
 //////////////
 struct PixelInputType
 {
-    float4 position : SV_POSITION;
-    float2 tex : TEXCOORD0;
-    float3 normal : NORMAL;
-    float4 lightViewPosition  : TEXCOORD1;
-    float3 lightPos : TEXCOORD2;
-    float4 lightViewPosition2 : TEXCOORD3;
-	float3 lightPos2 : TEXCOORD4;
-    float4 lightViewPosition3 : TEXCOORD5;
-	float3 lightPos3 : TEXCOORD6;
+	float4 position : SV_POSITION;
+	float2 tex : TEXCOORD0;
+	float3 normal : NORMAL;
+	float4 viewPosition : TEXCOORD1;
+	float4 lightViewPosition : TEXCOORD2;
+	float3 lightPos : TEXCOORD3;
+	float4 lightViewPosition2 : TEXCOORD4;
+	float3 lightPos2 : TEXCOORD5;
+	float4 lightViewPosition3 : TEXCOORD6;
+	float3 lightPos3 : TEXCOORD7;
+	float4 directionalLightViewPosition : TEXCOORD8;
 };
 
 
@@ -43,7 +46,7 @@ cbuffer LightBuffer
     float4 diffuseColor2;
     float4 diffuseColor3;
     float bias;
-    float3 padding;
+    float3 directionalLightDirection;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,22 +60,32 @@ float4 ShadowPixelShader(PixelInputType input) : SV_TARGET
     float lightDepthValue;
     float lightIntensity;
     float4 textureColor;
+    float3 directionalLightDir;
 
     // Set the default output color to the ambient light value for all pixels.
     color = ambientColor;
-    
+
+    input.normal = normalize(input.normal);
+    /*
+    // Invert the directional light direction.
+    directionalLightDir = -directionalLightDirection;
+    //return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    /////////////////////
+    // directional light //
+    ////////////////////
+
     // Calculate the projected texture coordinates.
-    projectTexCoord.x =  input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
-    projectTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w / 2.0f + 0.5f;
+    projectTexCoord.x =  input.directionalLightViewPosition.x / input.directionalLightViewPosition.w / 2.0f + 0.5f;
+    projectTexCoord.y = -input.directionalLightViewPosition.y / input.directionalLightViewPosition.w / 2.0f + 0.5f;
 
     // Determine if the projected coordinates are in the 0 to 1 range. if it is then this pixel is inside the projected view port.
     if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
     {
         // Sample the shadow map depth value from the depth texture using the sampler at the projected texture coordinate location.
-        depthValue = depthMapTexture.Sample(SampleTypeClamp, projectTexCoord).r;
+        depthValue = directionalDepthMap.Sample(SampleTypeClamp, projectTexCoord).r;
 
         // Calculate the depth of the light.
-        lightDepthValue = input.lightViewPosition.z / input.lightViewPosition.w;
+        lightDepthValue = input.directionalLightViewPosition.z / input.directionalLightViewPosition.w;
 
         // Subtract the bias from the lightDepthValue.
         lightDepthValue = lightDepthValue - bias;
@@ -82,39 +95,101 @@ float4 ShadowPixelShader(PixelInputType input) : SV_TARGET
         if(lightDepthValue < depthValue)
         {
             // Calculate the amount of light on this pixel.
-            lightIntensity = saturate(dot(input.normal, input.lightPos));
+            lightIntensity = saturate(dot(input.normal, directionalLightDir));
 
             if(lightIntensity > 0.0f)
             {
                 // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-                color += (diffuseColor * lightIntensity);
+                //color += (diffuseColor * lightIntensity);
             }
         }
     }
-    
-    ////////////////
-    // Second light: Use all the second light variables and textures for calculations.  Accumulate the additional light value into the color variable.
-    ////////////////
-    
-    projectTexCoord.x =  input.lightViewPosition2.x / input.lightViewPosition2.w / 2.0f + 0.5f;
-    projectTexCoord.y = -input.lightViewPosition2.y / input.lightViewPosition2.w / 2.0f + 0.5f;
-    
-    if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+    */
+    /*
+    else
     {
-        depthValue = depthMapTexture2.Sample(SampleTypeClamp, projectTexCoord).r;
-
-        lightDepthValue = input.lightViewPosition2.z / input.lightViewPosition2.w;
-        lightDepthValue = lightDepthValue - bias;
-
-        if(lightDepthValue < depthValue)
+        // If this is outside the area of shadow map range then draw things normally with regular lighting.
+        lightIntensity = saturate(dot(input.normal, directionalLightDir));
+        if(lightIntensity > 0.0f)
         {
-            lightIntensity = saturate(dot(input.normal, input.lightPos2));
-            if(lightIntensity > 0.0f)
-            {
-                color += (diffuseColor2 * lightIntensity);
-            }
+            color += (diffuseColor * lightIntensity);
+            //color = saturate(color);
         }
+    }*/
+
+     ////////////////
+    // first light //
+    ////////////////
+    
+    
+    // Calculate the amount of light on this pixel.
+    lightIntensity = saturate(dot(input.normal, input.lightPos));
+
+    if (lightIntensity > 0.0f)
+    {
+        // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
+        color += (diffuseColor * lightIntensity);
+        color = saturate(color);
     }
+    
+    // Calculate the projected texture coordinates.
+    projectTexCoord.x =  input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
+    projectTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w / 2.0f + 0.5f;
+    
+    depthValue = depthMapTexture.Sample(SampleTypeClamp, projectTexCoord).r;
+    color = color * depthValue;
+    //return float4(depthValue, depthValue, depthValue, 1.0f);
+    
+    ////////////////
+    // Second light //
+    ////////////////
+    
+    //projectTexCoord.x =  input.lightViewPosition2.x / input.lightViewPosition2.w / 2.0f + 0.5f;
+    //projectTexCoord.y = -input.lightViewPosition2.y / input.lightViewPosition2.w / 2.0f + 0.5f;
+    //depthValue = depthMapTexture2.Sample(SampleTypeClamp, projectTexCoord).r;
+    //color += diffuseColor * depthValue;
+    //if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+    //{
+    //    depthValue = depthMapTexture2.Sample(SampleTypeClamp, projectTexCoord).r;
+
+    //    lightDepthValue = input.lightViewPosition2.z / input.lightViewPosition2.w;
+    //    lightDepthValue = lightDepthValue - bias;
+
+    //    if(lightDepthValue < depthValue)
+    //    {
+    //        lightIntensity = saturate(dot(input.normal, input.lightPos2));
+    //        if(lightIntensity > 0.0f)
+    //        {
+    //            //color += (diffuseColor2 * lightIntensity);
+    //        }
+    //    }
+    //}
+
+    
+     ////////////////
+    // third light //
+    ////////////////
+
+    //projectTexCoord.x =  input.lightViewPosition3.x / input.lightViewPosition3.w / 2.0f + 0.5f;
+    //projectTexCoord.y = -input.lightViewPosition3.y / input.lightViewPosition3.w / 2.0f + 0.5f;
+    //depthValue = depthMapTexture3.Sample(SampleTypeClamp, projectTexCoord).r;
+    //color += diffuseColor * depthValue;
+    //if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+    //{
+    //    depthValue = depthMapTexture3.Sample(SampleTypeClamp, projectTexCoord).r;
+
+    //    lightDepthValue = input.lightViewPosition3.z / input.lightViewPosition3.w;
+    //    lightDepthValue = lightDepthValue - bias;
+
+    //    if(lightDepthValue < depthValue)
+    //    {
+    //        lightIntensity = saturate(dot(input.normal, input.lightPos3));
+    //        if(lightIntensity > 0.0f)
+    //        {
+    //            //color += (diffuseColor3 * lightIntensity);
+    //        }
+    //    }
+    //}
     
     // Saturate the final light color.
     color = saturate(color);

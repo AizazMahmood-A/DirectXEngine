@@ -159,6 +159,18 @@
     <ClInclude Include="LightData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BlurShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="OrthoWindowClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BlurClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthToBWShadowMap.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -299,6 +311,18 @@
     <ClCompile Include="LightData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BlueShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="OrthoWindowClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthToBWShadowMap.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="color.vs">
@@ -425,6 +449,18 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shadow.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Blur.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Blur.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="DepthToBWShadowMap.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="DepthToBWShadowMap.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

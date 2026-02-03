@@ -224,6 +224,11 @@ ID3D11ShaderResourceView* RenderTextureClass::GetShaderResourceView()
 	return m_shaderResourceView;
 }
 
+void RenderTextureClass::SetShaderResourceView(ID3D11ShaderResourceView* view)
+{
+	m_shaderResourceView = view;
+}
+
 void RenderTextureClass::GetProjectionMatrix(XMMATRIX& projectionMatrix)
 {
 	projectionMatrix = m_projectionMatrix;

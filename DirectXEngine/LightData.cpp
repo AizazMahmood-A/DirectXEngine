@@ -12,7 +12,7 @@ LightData::~LightData()
 
 }
 
-bool LightData::Initialize(LightClass* light, RenderTextureClass* renderTexture, float bias)
+bool LightData::Initialize(LightClass* light, RenderTextureClass* renderTexture, RenderTextureClass* blackWhiteRenderTexture, float bias)
 {
 	if (!light)
 	{
@@ -24,8 +24,14 @@ bool LightData::Initialize(LightClass* light, RenderTextureClass* renderTexture,
 		return false;
 	}
 
+	if (!blackWhiteRenderTexture)
+	{
+		return false;
+	}
+
 	m_Light = light;
 	m_RenderTexture = renderTexture;
+	m_BlackWhiteRenderTexture = blackWhiteRenderTexture;
 	m_bias = bias;
 
 	return true;
@@ -33,5 +39,23 @@ bool LightData::Initialize(LightClass* light, RenderTextureClass* renderTexture,
 
 void LightData::Shutdown()
 {
+	if (m_Light)
+	{
+		delete m_Light;
+		m_Light = 0;
+	}
 
+	if (m_RenderTexture)
+	{
+		m_RenderTexture->Shutdown();
+		delete m_RenderTexture;
+		m_RenderTexture = 0;
+	}
+
+	if (m_BlackWhiteRenderTexture)
+	{
+		m_BlackWhiteRenderTexture->Shutdown();
+		delete m_BlackWhiteRenderTexture;
+		m_BlackWhiteRenderTexture = 0;
+	}
 }

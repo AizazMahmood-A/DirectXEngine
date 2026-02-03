@@ -42,6 +42,9 @@ public:
 	void GetViewMatrix(XMMATRIX&);
 	void GetProjectionMatrix(XMMATRIX&);
 
+	void GenerateOrthoMatrix(float, float, float);
+	void GetOrthoMatrix(XMMATRIX&);
+
 private:
 	XMFLOAT4 m_ambientColor;
 	XMFLOAT4 m_diffuseColor;
@@ -52,6 +55,8 @@ private:
 	XMFLOAT3 m_lookAt;
 	XMMATRIX m_viewMatrix;
 	XMMATRIX m_projectionMatrix;
+	XMMATRIX m_orthoMatrix;
+public:
+	bool IsOrtho = false;
 };
-
 #endif

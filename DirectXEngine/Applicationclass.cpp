@@ -13,23 +13,16 @@ ApplicationClass::ApplicationClass()
 	m_Model = 0;
 	m_Models = 0;
 
-	//m_MultiTextureShader = 0;
-	//m_LightMapShader = 0;
-	//m_AlphaMapShader = 0;
-	//m_NormalMapShader = 0;
-	//m_SpecMapShader = 0;
-
 	m_TextureShader = 0;
 	m_Sprite = 0;
 	m_Timer = 0;
 
-	//m_LightShader = 0;
 	m_DirectionalLight = 0;
 
 	m_Models = 0;
 	m_modelCount = 0;
 
-	m_Lights = 0;
+	//m_Lights = 0;
 
 	m_FontShader = 0;
 	m_Font = 0;
@@ -41,33 +34,12 @@ ApplicationClass::ApplicationClass()
 	m_ShaderManager = 0;
 
 	m_RenderCountString = 0;
-	m_ModelList = 0;
+	//m_ModelList = 0;
 	m_Position = 0;
 	m_Frustum = 0;
 
-	m_RenderTexture = 0;
-	m_RenderTexture2 = 0;
-	//m_DisplayPlane = 0;
-
-	//m_FogShader = 0;
-	//m_ClipPlaneShader = 0;
-	//m_TranslateShader = 0;
-	//m_TransparentShader = 0;
-	//m_ReflectionShader = 0;
-
 	m_GroundModel = 0;
 	m_CubeModel = 0;
-	//m_WallModel = 0;
-	//m_BathModel = 0;
-	//m_WaterModel = 0;
-	//m_RefractionTexture = 0;
-	//m_ReflectionTexture = 0;
-	//m_RefractionShader = 0;
-	//m_WaterShader = 0;
-
-	//m_WindowModel = 0;
-	//m_GlassShader = 0;
-	//m_DepthShader = 0;
 
 	m_ParticleSystem = 0;
 	m_ParticleShader = 0;
@@ -81,6 +53,15 @@ ApplicationClass::ApplicationClass()
 
 	m_DepthShader = 0;
 	m_ShadowShader = 0;
+
+	m_LightData = 0;
+
+	m_RenderTexture = 0;
+	m_FullScreenWindow = 0;
+
+	m_Blur = 0;
+	m_BlurShader = 0;
+	m_depthToBWShadowMap = 0;
 }
 
 
@@ -120,10 +101,14 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera = new CameraClass;
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(-8.0f, 7.0f, 8.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
 	m_Camera->Render();
-	m_Camera->SetRotation(35.0f, 135.0f, 0.0f);
-	m_Camera->GetViewMatrix(m_baseViewMatrix);
+	m_Camera->RenderBaseViewMatrix();
+	m_Camera->GetBaseViewMatrix(m_baseViewMatrix);
+
+	//m_Camera->SetRotation(35.0f, 0.0f, 0.0f);
+	m_Camera->SetPosition(0.0f, 8.0f, -10.0f);
+	m_Camera->SetRotation(35.0f, 0.0f, 0.0f);
 	m_Camera->Render();
 	//m_Camera->SetPosition(0.0f, 0.0f, 0.0f);
 
@@ -141,24 +126,21 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the number of lights we will use.
 	m_numLights = 5;
 
-	// Create and initialize the light objects array.
-	m_Lights = new LightClass[m_numLights];
-
 	// Manually set the color and position of each light.
-	m_Lights[0].SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);  // Red
-	m_Lights[0].SetPosition(-3.0f, 1.0f, 3.0f);
+	//m_Lights[0].SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);  // Red
+	//m_Lights[0].SetPosition(-3.0f, 1.0f, 3.0f);
 
-	m_Lights[1].SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);  // Green
-	m_Lights[1].SetPosition(3.0f, 1.0f, 3.0f);
+	//m_Lights[1].SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);  // Green
+	//m_Lights[1].SetPosition(3.0f, 1.0f, 3.0f);
 
-	m_Lights[2].SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);  // Blue
-	m_Lights[2].SetPosition(-3.0f, 1.0f, -3.0f);
+	//m_Lights[2].SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);  // Blue
+	//m_Lights[2].SetPosition(-3.0f, 1.0f, -3.0f);
 
-	m_Lights[3].SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);  // White
-	m_Lights[3].SetPosition(3.0f, 1.0f, -3.0f);
+	//m_Lights[3].SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);  // White
+	//m_Lights[3].SetPosition(3.0f, 1.0f, -3.0f);
 
-	m_Lights[4].SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);  // Purple
-	m_Lights[4].SetPosition(0.0f, 1.0f, 0.0f);
+	//m_Lights[4].SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);  // Purple
+	//m_Lights[4].SetPosition(0.0f, 1.0f, 0.0f);
 
 	// Create and Initialize the normal map shader object.
 	m_ShaderManager = new ShaderManagerClass;
@@ -237,151 +219,6 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Viewpoint->SetProjectionParameters((3.14159265358979323846f / 2.0f), 1.0f, 0.1f, 100.0f); //(3.14159265358979323846f / 2.0f)
 	m_Viewpoint->GenerateViewMatrix();
 	m_Viewpoint->GenerateProjectionMatrix();
-
-	// Create and initialize the light object.
-	// Create and initialize the light object.
-
-	// Set the file name of the wall model.
-	//strcpy_s(modelFilename, "../DirectXEngine/data/wall.txt");
-	//strcpy_s(textureFilename, "../DirectXEngine/data/wall01.tga");
-
-	// Create and initialize wall model.
-	//m_WallModel = new ModelClass;
-
-	//result = m_WallModel->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename, textureFilename, textureFilename);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the wall model object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	//// Set the file name of the wall model.
-	//strcpy_s(modelFilename, "../DirectXEngine/data/bath.txt");
-	//strcpy_s(textureFilename, "../DirectXEngine/data/marble01.tga");
-
-	//// Create and initialize wall model.
-	//m_BathModel = new ModelClass;
-
-	//result = m_BathModel->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename, textureFilename, textureFilename);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the bath model object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	//// Set the file names of the water model.
-	//strcpy_s(modelFilename, "../DirectXEngine/data/water.txt");
-	//strcpy_s(textureFilename, "../DirectXEngine/data/water01.tga");
-
-	//// Create and initialize the water model object.
-	//m_WaterModel = new ModelClass;
-
-	//result = m_WaterModel->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename, textureFilename, textureFilename);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the water model object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	//// Create and initialize the refraction render to texture object.
-	//m_ReflectionTexture = new RenderTextureClass;
-
-	//result = m_ReflectionTexture->Initialize(m_Direct3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR, 1);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the reflection render texture object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	//// Create and initialize the reflection to texture object.
-	//m_RefractionTexture = new RenderTextureClass;
-
-	//result = m_RefractionTexture->Initialize(m_Direct3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR, 1);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the refraction render texture object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Set the file name of the cube model.
-	//strcpy_s(modelFilename, "../DirectXEngine/data/cube.txt");
-
-	// Set the file name of the textures for the cube model.
-	//strcpy_s(textureFilename1, "../DirectXEngine/data/stone01.tga");
-	//strcpy_s(textureFilename2, "../DirectXEngine/data/normal03.tga");
-
-	// Create and initialize the cube model object.
-	//m_Model = new ModelClass;
-
-	//result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename1, textureFilename2, textureFilename1);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the cube model object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Set the file name of the window model.
-	//strcpy_s(modelFilename, "../DirectXEngine/data/square.txt");
-
-	// Set the file name of the textures for the window model.
-	//strcpy_s(textureFilename1, "../DirectXEngine/data/ice01.tga");
-	//strcpy_s(textureFilename2, "../DirectXEngine/data/icebump01.tga");
-
-	// Create and initialize the window model object.
-	//m_WindowModel = new ModelClass;
-
-	//result = m_WindowModel->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename1, textureFilename2, textureFilename1);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the window model object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Set the filenames for the floor model object.
-	//strcpy_s(modelFilename, "../DirectXEngine/data/floor.txt");
-
-	//// Create and initalize the model object.
-	//m_Model = new ModelClass;
-
-	//result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename, textureFilename, textureFilename);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Create and initialize the depth shader object.
-	//m_DepthShader = new DepthShaderClass;
-
-	//result = m_DepthShader->Initialize(m_Direct3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the depth shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Set the file name of the texture for the particle system.
-	//strcpy_s(textureFilename, "../DirectXEngine/data/star01.tga");
-
-	//// Create and initialize the partcile system object.
-	//m_ParticleSystem = new ParticleSystemClass;
-
-	//result = m_ParticleSystem->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), textureFilename);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the particle system object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Create and initialize the particle shader object.
-	//m_ParticleShader = new ParticleShaderClass;
-
-	//result = m_ParticleShader->Initialize(m_Direct3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the particle shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
 
 	// Create and initialize the timer object.
 	m_Timer = new TimerClass;
@@ -468,42 +305,6 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create and initialize the light shader object.
-	//m_LightShader = new LightShaderClass;
-
-	//result = m_LightShader->Initialize(m_Direct3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Create and initialize the refraction shader object.
-	//m_RefractionShader = new RefractionShaderClass;
-
-	//result = m_RefractionShader->Initialize(m_Direct3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the refraction shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Create and initialize the water shader obect.
-	//m_WaterShader = new WaterShaderClass;
-
-	//result = m_WaterShader->Initialize(m_Direct3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the water shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Set the height of the water.
-	//m_waterHeight = 2.75f;
-
-	// Initialize the position of the water.
-	//m_waterTranslation = 0.0f;
-
 	// Create and initialize the texture shader object.
 	m_TextureShader = new TextureShaderClass;
 
@@ -514,16 +315,49 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create and initialize the glass shader object.
-	//m_GlassShader = new GlassShaderClass;
+	// Create and initialize the render to texture object.
+	m_RenderTexture = new RenderTextureClass;
 
-	//result = m_GlassShader->Initialize(m_Direct3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the glass shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
+	result = m_RenderTexture->Initialize(m_Direct3D->GetDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH, 0);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the render texture object.", L"Error", MB_OK);
+		return false;
+	}
 
+	// Create and initialize the full screen ortho window object.
+	m_FullScreenWindow = new OrthoWindowClass;
+
+	result = m_FullScreenWindow->Initialize(m_Direct3D->GetDevice(), screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the full screen ortho window object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Set the size to sample down to.
+	int downSampleWidth = SHADOWMAP_WIDTH / 2;
+	int downSampleHeight = SHADOWMAP_HEIGHT / 2;
+
+	// Create and initialize the blur object.
+	m_Blur = new BlurClass;
+
+	result = m_Blur->Initialize(m_Direct3D, downSampleWidth, downSampleHeight, SCREEN_NEAR, SCREEN_DEPTH, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the blur object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create and initialize the blur shader object.
+	m_BlurShader = new BlurShaderClass;
+
+	result = m_BlurShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the blur shader object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create and initialize the depth shader object.
 	m_DepthShader = new DepthShaderClass;
@@ -545,9 +379,14 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create and initialize the model list object.
-	m_ModelList = new ModelListClass;
-	m_ModelList->Initialize(25);
+	m_depthToBWShadowMap = new DepthToBWShadowMap;
+
+	result = m_depthToBWShadowMap->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the depth to BW shader object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create the position class object.
 	m_Position = new PositionClass;
@@ -558,85 +397,178 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the shadow map bias to fix the floating point precision issues (shadow acne/lines artifacts).
 	m_shadowMapBias = 0.0022f;
 
-	m_LightDataSize = 3;
+	m_LightDataSize = 4;
 	m_LightData = new LightData[m_LightDataSize];
 
-	LightData* lightData = new LightData;
-	LightClass *light = new LightClass;
-
+	LightClass* light = new LightClass;
 	light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	light->SetLookAt(0.0f, 0.0f, 0.0f);
 	light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
 	// Create and initialize the render to texture object.
-	m_RenderTexture = new RenderTextureClass;
+	RenderTextureClass* renderTexture = new RenderTextureClass;
 
-	result = m_RenderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
+	result = renderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the render texture object.", L"Error", MB_OK);
 		return false;
 	}
 
+	// Create and initialize the black and white render to texture object.
+	RenderTextureClass* blackWhiteRenderTexture = new RenderTextureClass;
+
+	result = blackWhiteRenderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the black and white render texture object.", L"Error", MB_OK);
+		return false;
+	}
+
 	//lightData->Initialize(light, m_RenderTexture, m_shadowMapBias);
-	m_LightData[0].Initialize(light, m_RenderTexture, m_shadowMapBias);
+	m_LightData[0].Initialize(light, renderTexture, blackWhiteRenderTexture, m_shadowMapBias);
 
-	lightData = new LightData;
 	light = new LightClass;
-
 	light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	light->SetLookAt(0.0f, 0.0f, 0.0f);
 	light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
 	// Create and initialize the second render to texture object.
-	m_RenderTexture2 = new RenderTextureClass;
+	renderTexture = new RenderTextureClass;
 
-	result = m_RenderTexture2->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
+	result = renderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the second render to texture object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create and initialize the black and white render to texture object.
+	blackWhiteRenderTexture = new RenderTextureClass;
+
+	result = blackWhiteRenderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the black and white render texture object.", L"Error", MB_OK);
 		return false;
 	}
 
 	//lightData->Initialize(light, m_RenderTexture2, m_shadowMapBias);
-	m_LightData[1].Initialize(light, m_RenderTexture2, m_shadowMapBias);
+	m_LightData[1].Initialize(light, renderTexture, blackWhiteRenderTexture, m_shadowMapBias);
 
-	lightData = new LightData;
 	light = new LightClass;
-
 	light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	light->SetLookAt(0.0f, 0.0f, 0.0f);
 	light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
 	// Create and initialize the second render to texture object.
-	m_RenderTexture3 = new RenderTextureClass;
+	renderTexture = new RenderTextureClass;
 
-	result = m_RenderTexture3->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
+	result = renderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the second render to texture object.", L"Error", MB_OK);
 		return false;
 	}
 
+	// Create and initialize the black and white render to texture object.
+	blackWhiteRenderTexture = new RenderTextureClass;
+
+	result = blackWhiteRenderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the black and white render texture object.", L"Error", MB_OK);
+		return false;
+	}
+
 	//lightData->Initialize(light, m_RenderTexture3, m_shadowMapBias);
-	m_LightData[2].Initialize(light, m_RenderTexture3, m_shadowMapBias);
+	m_LightData[2].Initialize(light, renderTexture, blackWhiteRenderTexture, m_shadowMapBias);
+
+	light = new LightClass;
+	light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	light->SetLookAt(0.0f, 0.0f, 0.0f);
+	light->GenerateOrthoMatrix(20.0f, SHADOWMAP_NEAR, SHADOWMAP_DEPTH);
+	//light->GenerateProjectionMatrix(SHADOWMAP_NEAR, SHADOWMAP_DEPTH);
+
+	// Create and initialize the second render to texture object.
+	renderTexture = new RenderTextureClass;
+
+	result = renderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SHADOWMAP_DEPTH, SHADOWMAP_NEAR, 1);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the second render to texture object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create and initialize the black and white render to texture object.
+	blackWhiteRenderTexture = new RenderTextureClass;
+
+	result = blackWhiteRenderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the black and white render texture object.", L"Error", MB_OK);
+		return false;
+	}
+
+	//lightData->Initialize(light, m_RenderTexture3, m_shadowMapBias);
+	m_LightData[3].Initialize(light, renderTexture, blackWhiteRenderTexture, m_shadowMapBias);
 
 	return true;
 }
 
-
 void ApplicationClass::Shutdown()
 {
 
-	// Release the second render to texture object.
-	if (m_RenderTexture2)
+	if (m_depthToBWShadowMap)
 	{
-		m_RenderTexture2->Shutdown();
-		delete m_RenderTexture2;
-		m_RenderTexture2 = 0;
+		m_depthToBWShadowMap->Shutdown();
+		delete m_depthToBWShadowMap;
+		m_depthToBWShadowMap = 0;
+	}
+
+	// Release the blur shader object.
+	if (m_BlurShader)
+	{
+		m_BlurShader->Shutdown();
+		delete m_BlurShader;
+		m_BlurShader = 0;
+	}
+
+	// Release the blur object.
+	if (m_Blur)
+	{
+		m_Blur->Shutdown();
+		delete m_Blur;
+		m_Blur = 0;
+	}
+
+	// Release the full screen ortho window object.
+	if (m_FullScreenWindow)
+	{
+		m_FullScreenWindow->Shutdown();
+		delete m_FullScreenWindow;
+		m_FullScreenWindow = 0;
+	}
+
+	// Release the render texture object.
+	if (m_RenderTexture)
+	{
+		m_RenderTexture->Shutdown();
+		delete m_RenderTexture;
+		m_RenderTexture = 0;
+	}
+
+	if (m_LightData)
+	{
+		for (int i = 0; i < m_LightDataSize; i++)
+		{
+			m_LightData[i].Shutdown();
+		}
+		m_LightData = 0;
 	}
 
 	// Release the second light object.
@@ -716,22 +648,6 @@ void ApplicationClass::Shutdown()
 		m_ParticleSystem = 0;
 	}
 
-	// Release the depth shader object.
-	//if (m_DepthShader)
-	//{
-	//	m_DepthShader->Shutdown();
-	//	delete m_DepthShader;
-	//	m_DepthShader = 0;
-	//}
-
-	// Release the glass shader object.
-	//if (m_GlassShader)
-	//{
-	//	m_GlassShader->Shutdown();
-	//	delete m_GlassShader;
-	//	m_GlassShader = 0;
-	//}
-
 	// Release the texture shader object.
 	if (m_TextureShader)
 	{
@@ -739,93 +655,6 @@ void ApplicationClass::Shutdown()
 		delete m_TextureShader;
 		m_TextureShader = 0;
 	}
-
-	// Release the render to texture object.
-	if (m_RenderTexture)
-	{
-		m_RenderTexture->Shutdown();
-		delete m_RenderTexture;
-		m_RenderTexture = 0;
-	}
-
-	// Release the window model object.
-	//if (m_WindowModel)
-	//{
-	//	m_WindowModel->Shutdown();
-	//	delete m_WindowModel;
-	//	m_WindowModel = 0;
-	//}
-
-	// Release the water shader object.
-	//if (m_WaterShader)
-	//{
-	//	m_WaterShader->Shutdown();
-	//	delete m_WaterShader;
-	//	m_WaterShader = 0;
-	//}
-
-	// Release the refraction shader object.
-	//if (m_RefractionShader)
-	//{
-	//	m_RefractionShader->Shutdown();
-	//	delete m_RefractionShader;
-	//	m_RefractionShader = 0;
-	//}
-
-	// Release the light shader object.
-	//if (m_LightShader)
-	//{
-	//	m_LightShader->Shutdown();
-	//	delete m_LightShader;
-	//	m_LightShader = 0;
-	//}
-
-	// Release the reflection render texture object.
-	//if (m_ReflectionTexture)
-	//{
-	//	m_ReflectionTexture->Shutdown();
-	//	delete m_ReflectionTexture;
-	//	m_ReflectionTexture = 0;
-	//}
-
-	// Release the refraction render texture object.
-	//if (m_RefractionTexture)
-	//{
-	//	m_RefractionTexture->Shutdown();
-	//	delete m_RefractionTexture;
-	//	m_RefractionTexture = 0;
-	//}
-
-	// Release the light object.
-	//if (m_Light)
-	//{
-	//	delete m_Light;
-	//	m_Light = 0;
-	//}
-
-	// Release the water model object.
-	//if (m_WaterModel)
-	//{
-	//	m_WaterModel->Shutdown();
-	//	delete m_WaterModel;
-	//	m_WaterModel = 0;
-	//}
-
-	// Release the bath model object.
-	//if (m_BathModel)
-	//{
-	//	m_BathModel->Shutdown();
-	//	delete m_BathModel;
-	//	m_BathModel = 0;
-	//}
-
-	// Release the wall model object.
-	//if (m_WallModel)
-	//{
-	//	m_WallModel->Shutdown();
-	//	delete m_WallModel;
-	//	m_WallModel = 0;
-	//}
 
 	// Release the ground model object.
 	if (m_GroundModel)
@@ -854,14 +683,6 @@ void ApplicationClass::Shutdown()
 	{
 		delete m_Timer;
 		m_Timer = 0;
-	}
-
-	// Release the model list object.
-	if (m_ModelList)
-	{
-		m_ModelList->Shutdown();
-		delete m_ModelList;
-		m_ModelList = 0;
 	}
 
 	// Release the text objects for the render count string.
@@ -937,27 +758,12 @@ void ApplicationClass::Shutdown()
 		m_Sprite = 0;
 	}
 
-	// Release the light objects.
-	if (m_Lights)
-	{
-		delete[] m_Lights;
-		m_Lights = 0;
-	}
-
 	// Release the light object.
 	if (m_DirectionalLight)
 	{
 		delete m_DirectionalLight;
 		m_DirectionalLight = 0;
 	}
-
-	// Release the light shader object.
-	//if (m_LightShader)
-	//{
-	//	m_LightShader->Shutdown();
-	//	delete m_LightShader;
-	//	m_LightShader = 0;
-	//}
 
 	// Release the model object.
 	if (m_Model)
@@ -1019,7 +825,6 @@ void ApplicationClass::Shutdown()
 	return;
 }
 
-
 static float rotation = 360.0f;
 //static float textureTranslation = 0.0f;
 bool ApplicationClass::Frame(InputClass* Input)
@@ -1036,13 +841,6 @@ bool ApplicationClass::Frame(InputClass* Input)
 	{
 		return false;
 	}
-
-	// Update the position of the water to simulate motion.
-	//m_waterTranslation += 0.001f;
-	//if (m_waterTranslation > 1.0f)
-	//{
-	//	m_waterTranslation -= 1.0f;
-	//}
 
 	// Get the location of the mouse from the input object.
 	Input->GetMouseLocation(mouseX, mouseY);
@@ -1083,10 +881,6 @@ bool ApplicationClass::Frame(InputClass* Input)
 	// Get the current view point rotation.
 	m_Position->GetRotationY(cameraRotationY);
 
-	// Set the rotation of the camera.
-	//m_Camera->SetRotation(0.0f, cameraRotationY, 0.0f);
-	//m_Camera->Render();
-
 	// Update the rotation variable each frame.
 	rotation -= 0.0174532925f * 0.0025f;
 	if (rotation <= 0.0f)
@@ -1094,95 +888,70 @@ bool ApplicationClass::Frame(InputClass* Input)
 		rotation += 360.0f;
 	}
 
+	static float lightAngle = 270.0f;
+	float radians;
+	static float lightPosX = 9.0f;
+
 	// Update the position of the light each frame.
-	lightPositionX += 0.05f * 0.0025f;
-	if (lightPositionX > 5.0f)
+	lightPosX -= 0.003f * frameTime * 100.0f;
+
+	// Update the angle of the light each frame.
+	lightAngle -= 0.03f * frameTime * 100.0f;
+	if (lightAngle < 90.0f)
 	{
-		lightPositionX = -5.0f;
+		lightAngle = 270.0f;
+
+		// Reset the light position also.
+		lightPosX = 9.0f;
 	}
+	radians = lightAngle * 0.0174532925f;
 
-	// Set the position of the first light and generate it's new view matrix.
-	//m_Light->SetPosition(5.0f, 8.0f, -5.0f);
-	//m_Light->GenerateViewMatrix();
+	XMFLOAT3* lightPositionArray = new XMFLOAT3[m_LightDataSize];
+	lightPositionArray[0] = XMFLOAT3(5.0f, 8.0f, -5.0f);
+	lightPositionArray[1] = XMFLOAT3(-5.0f, 8.0f, -5.0f);
+	lightPositionArray[2] = XMFLOAT3(-5.0f, 8.0f, 5.0f);
+	lightPositionArray[3] = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-	// Set the position of the second light and generate it's new view matrix.
-	//m_Light2->SetPosition(-5.0f, 8.0f, -5.0f);
-	//m_Light2->GenerateViewMatrix();
-	if (m_LightDataSize > 0)
-	{
-		m_LightData[0].m_Light->SetPosition(5.0f, 8.0f, -5.0f);
-		m_LightData[0].m_Light->GenerateViewMatrix();
-	}
-
-	if (m_LightDataSize > 1)
-	{
-		m_LightData[1].m_Light->SetPosition(-5.0f, 8.0f, -5.0f);
-		m_LightData[1].m_Light->GenerateViewMatrix();
-	}
-
-	if (m_LightDataSize > 2)
-	{
-		m_LightData[2].m_Light->SetPosition(5.0f, -8.0f, -5.0f);
-		m_LightData[2].m_Light->GenerateViewMatrix();
-	}
-
-	for (int i = 0; i < m_LightDataSize; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		LightData* light = &m_LightData[i];
+		XMFLOAT3 pos = lightPositionArray[i];
+		if (light->m_Light->IsOrtho)
+		{
+			light->m_Light->SetDirection(sinf(radians), cosf(radians), 0.0f);
+			light->m_Light->SetPosition(lightPosX, 8.0f, -0.1f);
+			light->m_Light->SetLookAt(-lightPosX, 0.0f, 0.0f);
+
+			cout << "lightPos: " << lightPosX << " radians: " << radians << " frameTime: " << frameTime << "\n";
+
+			light->m_Light->GenerateViewMatrix();
+		}
+		else
+		{
+			light->m_Light->SetPosition(pos.x, pos.y, pos.z);
+			light->m_Light->GenerateViewMatrix();
+		}
+
 		result = RenderDepthToTexture(light->m_RenderTexture, light->m_Light);
 		if (!result)
 		{
 			return false;
 		}
+
+		//m_Direct3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f);
+		result = RenderBlackAndWhiteShadows(light->m_BlackWhiteRenderTexture, light->m_Light, light->m_RenderTexture);
+		if (!result)
+		{
+			return false;
+		}
+
+		//m_Direct3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f);
+		result = m_Blur->BlurTexture(m_Direct3D, m_Camera, light->m_BlackWhiteRenderTexture, m_TextureShader, m_BlurShader);
+		if (!result)
+		{
+			return false;
+		}
 	}
-
-	//// Render the shadow map first.
-	//result = RenderDepthToTexture(m_RenderTexture, m_Light);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	//// Render the scene depth of the second light to the render texture.
-	//result = RenderDepthToTexture(m_RenderTexture2, m_Light2);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	//textureTranslation += 0.08f * frameTime;
-	//if (textureTranslation > 1.0f)
-	//{
-	//	textureTranslation -= 1.0f;
-	//}
-
-	// Render the scene to a render texture.
-	//result = RenderSceneToTexture(rotation);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	// Render the refraction of the scene to a texture.
-	//result = RenderRefractionToTexture();
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	// Render the entire scene as a reflection to the texture first.
-	//result = RenderReflectionToTexture(rotation);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	// Run the frame processing for the particle system.
-	//result = m_ParticleSystem->Frame(m_Timer->GetTime(), m_Direct3D->GetDeviceContext());
-	//if (!result)
-	//{
-	//	return false;
-	//}
 
 	// Render the scene.
 	result = Render();
@@ -1296,44 +1065,6 @@ XMMATRIX ApplyTransformations(XMMATRIX translation, XMMATRIX scale, XMMATRIX rot
 	return worldMatrix;
 }
 
-bool ApplicationClass::RenderSceneToTexture(float rotation)
-{
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
-	bool result;
-
-	// Set the render target to be the render texture and clear it.
-	m_RenderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
-	m_RenderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.5f, 0.5f, 1.0f, 1.0f);
-
-	// Set the position of the camera for viewing the cube.
-	//m_Camera->SetPosition(0.0f, 5.0f, -15.0f);
-
-	m_Camera->Render();
-
-	// Get the matrices.
-	m_Direct3D->GetWorldMatrix(worldMatrix);
-	m_Camera->GetViewMatrix(viewMatrix);
-	m_RenderTexture->GetProjectionMatrix(projectionMatrix);
-
-	// Rotate the world matrix by the rotation value so that the cube will spin.
-	worldMatrix = XMMatrixRotationY(rotation);
-
-	// Render the model using the texture shader.
-	m_Model->Render(m_Direct3D->GetDeviceContext());
-
-	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Model->GetTexture(0));
-	if (!result)
-	{
-		return false;
-	}
-
-	// Reset the render target back to the original back buffer and not the render to texture anymore.  And reset the viewport back to the original.
-	m_Direct3D->SetBackBufferRenderTarget();
-	m_Direct3D->ResetViewport();
-
-	return true;
-}
-
 bool ApplicationClass::RenderDepthToTexture(RenderTextureClass* renderTexture, LightClass* light)
 {
 	XMMATRIX translateMatrix, lightViewMatrix, lightProjectionMatrix;
@@ -1345,7 +1076,14 @@ bool ApplicationClass::RenderDepthToTexture(RenderTextureClass* renderTexture, L
 
 	// Get the view and orthographic matrices from the light object.
 	light->GetViewMatrix(lightViewMatrix);
-	light->GetProjectionMatrix(lightProjectionMatrix);
+	if (light->IsOrtho)
+	{
+		light->GetOrthoMatrix(lightProjectionMatrix);
+	}
+	else
+	{
+		light->GetProjectionMatrix(lightProjectionMatrix);
+	}
 
 	// Setup the translation matrix for the cube model.
 	translateMatrix = XMMatrixTranslation(-2.0f, 2.0f, 0.0f);
@@ -1391,9 +1129,142 @@ bool ApplicationClass::RenderDepthToTexture(RenderTextureClass* renderTexture, L
 	return true;
 }
 
+bool ApplicationClass::RenderBlackAndWhiteShadows(RenderTextureClass* blackWhiteRenderTexture, LightClass* light, RenderTextureClass* depthTexture)
+{
+	XMMATRIX translateMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix;
+	bool result;
+
+	// Set the render target to be render to texture. Also clear the render to texture.
+	blackWhiteRenderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
+	blackWhiteRenderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Get the view matrix from the camera, and get the projection matrix from the Direct3D object.
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_Direct3D->GetProjectionMatrix(projectionMatrix);
+
+	// Get the View and orthographic matrices from the light object.
+	light->GetViewMatrix(lightViewMatrix);
+	light->GetProjectionMatrix(lightProjectionMatrix);
+
+	// Setup the translation matrix for the cube model.
+	translateMatrix = XMMatrixTranslation(-2.0f, 2.0f, 0.0f);
+
+	// Render the cube model using the depth shader.
+	m_CubeModel->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_depthToBWShadowMap->Render(m_Direct3D->GetDeviceContext(), m_CubeModel->GetIndexCount(),
+		translateMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+		depthTexture->GetShaderResourceView(), light->GetPosition(), m_shadowMapBias);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Setup the translation matrix for the sphere model.
+	translateMatrix = XMMatrixTranslation(2.0f, 2.0f, 0.0f);
+	translateMatrix = ApplyTransformations(translateMatrix, XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixRotationX(0.0f));
+
+	// Render the sphere model using the depth shader.
+	m_SphereModel->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_depthToBWShadowMap->Render(m_Direct3D->GetDeviceContext(), m_SphereModel->GetIndexCount(),
+		translateMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+		depthTexture->GetShaderResourceView(), light->GetPosition(), m_shadowMapBias);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Setup the translation matrix for the ground model.
+	translateMatrix = XMMatrixTranslation(0.0f, 1.0f, 0.0f);
+
+	// Render the ground model using the depth shader.
+	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_depthToBWShadowMap->Render(m_Direct3D->GetDeviceContext(), m_GroundModel->GetIndexCount(),
+		translateMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+		depthTexture->GetShaderResourceView(), light->GetPosition(), m_shadowMapBias);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore. also reset the viewport back to the original.
+	m_Direct3D->SetBackBufferRenderTarget();
+	m_Direct3D->ResetViewport();
+
+	return true;
+}
+
+bool ApplicationClass::RenderSceneToTexture(float rotation)
+{
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	bool result;
+
+	// Set the render target to be the render texture and clear it.
+	m_RenderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
+	m_RenderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Get the matrices.
+	m_Direct3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_RenderTexture->GetProjectionMatrix(projectionMatrix);
+
+	// Setup the translation matrix for the cube model.
+	worldMatrix = XMMatrixTranslation(-2.0f, 2.0f, 0.0f);
+
+	// Render the cube model using the shadow shader.
+	m_CubeModel->Render(m_Direct3D->GetDeviceContext());
+	//lightPosition = XMFLOAT3(m_Light->GetPosition().x, m_Light->GetPosition().y, m_Light->GetPosition().z);
+
+	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_CubeModel->GetTexture(0));// , m_LightData, m_LightDataSize);
+
+	if (!result)
+	{
+		return false;
+	}
+
+	// Setup the translation matrix for the sphere model.
+	worldMatrix = XMMatrixTranslation(2.0f, 2.0f, 0.0f);
+	worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixRotationX(0.0f));
+
+	// Render the sphere model using the shadow shader.
+	m_SphereModel->Render(m_Direct3D->GetDeviceContext());
+	//lightPosition = XMFLOAT3(m_Light->GetPosition().x, m_Light->GetPosition().y, m_Light->GetPosition().z);
+
+	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_SphereModel->GetTexture(0));//, m_LightData, m_LightDataSize);
+
+	if (!result)
+	{
+		return false;
+	}
+
+	// Setup the translation matrix for the ground model.
+	worldMatrix = XMMatrixTranslation(0.0f, 1.0f, 0.0f);
+
+	// Render the ground model using the shadow shader.
+	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_GroundModel->GetTexture(0));//, m_LightData, m_LightDataSize);
+
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.  And reset the viewport back to the original.
+	m_Direct3D->SetBackBufferRenderTarget();
+	m_Direct3D->ResetViewport();
+
+	return true;
+}
+
 bool ApplicationClass::Render()
 {
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, viewMatrix2, projectionMatrix2, lightViewMatrix, lightProjectionMatrix, lightViewMatrix2, lightProjectionMatrix2; // , rotationMatrix, translateMatrix, scaleMatrix, srMatrix;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, lightViewMatrix, lightProjectionMatrix, lightViewMatrix2, lightProjectionMatrix2; // , rotationMatrix, translateMatrix, scaleMatrix, srMatrix;
 	XMMATRIX orthoMatrix;
 
 	XMFLOAT4 diffuseColors[5];
@@ -1423,65 +1294,39 @@ bool ApplicationClass::Render()
 
 	// Set the refraction scale for the glass shader.
 	refractionScale = 0.1f;
-
+	
 	// Clear the buffers to begin the scene.
 	m_Direct3D->BeginScene(fogColor, fogColor, fogColor, 1.0f);
-
-	// Generate the view matrix based on the camera's position.
-	//m_Camera->Render();
-
+	
 	// Get the world, view, projection matrices from the camera and d3d objects.
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Direct3D->GetProjectionMatrix(projectionMatrix);
-
-	//m_Direct3D->GetWorldMatrix(UIWorldMatrix);
-	//m_Camera->GetViewMatrix(UIViewMatrix);
 	m_Direct3D->GetOrthoMatrix(orthoMatrix);
-
+	
 	// Set the light brightness.
 	brightness = 1.5f;
-
-	// Construct the frustum.
-	m_Frustum->ConstructFrustum(viewMatrix, projectionMatrix, SCREEN_DEPTH);
-
-	// Get the number of models that will be rendered.
-	modelCount = m_ModelList->GetModelCount();
 
 	// Initialize the count of models that have been rendered.
 	renderCount = 0;
 
-	// Get the light properties.
-	for (i = 0; i < m_numLights; i++)
-	{
-		// Create the diffuse color array from the four light colors.
-		diffuseColors[i] = m_Lights[i].GetDiffuseColor();
+	// Render the full screen ortho window.
+	//m_FullScreenWindow->Render(m_Direct3D->GetDeviceContext());
 
-		// Create the light position array from the four light positions.
-		lightPositions[i] = m_Lights[i].GetPosition();
-	}
+	//// Render the full screen ortho window using the texture shader and the full screen sized blurred render to texture resource.
+	//result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_LightData[0].m_BlackWhiteRenderTexture->GetShaderResourceView());// m_RenderTexture->GetShaderResourceView());
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
-	// Get the view and projection matrices from the view point object.
-	//m_Light->GetViewMatrix(lightViewMatrix);
-	//m_Light->GetProjectionMatrix(lightProjectionMatrix);
-
-	// Get the view and projection matrices from the second light.
-	//m_Light2->GetViewMatrix(lightViewMatrix2);
-	//m_Light2->GetProjectionMatrix(lightProjectionMatrix2);
-
-	// Get the view and projection from the view point objext.
-	m_Viewpoint->GetViewMatrix(viewMatrix2);
-	m_Viewpoint->GetProjectionMatrix(projectionMatrix2);
-	// Setup the translation matrix for the cube model.
+	
 	worldMatrix = XMMatrixTranslation(-2.0f, 2.0f, 0.0f);
-
 	// Render the cube model using the shadow shader.
 	m_CubeModel->Render(m_Direct3D->GetDeviceContext());
-	//lightPosition = XMFLOAT3(m_Light->GetPosition().x, m_Light->GetPosition().y, m_Light->GetPosition().z);
 
 	result = m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_CubeModel->GetTexture(0), m_LightData, m_LightDataSize);
-
 	if (!result)
 	{
 		return false;
@@ -1508,7 +1353,6 @@ bool ApplicationClass::Render()
 
 	// Render the ground model using the shadow shader.
 	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
-	//lightPosition = XMFLOAT3(m_Light->GetPosition().x, m_Light->GetPosition().y, m_Light->GetPosition().z);
 
 	result = m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_GroundModel->GetTexture(0), m_LightData, m_LightDataSize);
@@ -1517,24 +1361,12 @@ bool ApplicationClass::Render()
 	{
 		return false;
 	}
-
+	
 	// Turn on alpha blending for the transparency to work.
 	m_Direct3D->EnableAlphaBlending();
 
-	// Render the full screen ortho window.
-	//m_ParticleSystem->Render(m_Direct3D->GetDeviceContext());
-
-	//// Render the full screen ortho window using the texture shader and the full screen sized blurred render to texture resource.
-	//result = m_ParticleShader->Render(m_Direct3D->GetDeviceContext(), m_ParticleSystem->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_ParticleSystem->GetTexture());
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
 	// Reset the world matrix.
 	m_Direct3D->GetWorldMatrix(worldMatrix);
-
-	//worldMatrix = XMMatrixTranslation(-1.0f, 0.0f, 0.0f);
 
 	// Turn off the Z buffer to begin all 2D rendering and enable alpha blending.
 	m_Direct3D->TurnZBufferOff();
@@ -1576,11 +1408,9 @@ bool ApplicationClass::Render()
 	// Enable the Z buffer and disable alpha blending now that 2D rendering is complete.
 	m_Direct3D->TurnZBufferOn();
 	m_Direct3D->DisableAlphaBlending();
-
+	
 	// Present the rendered scene to the screen.
 	m_Direct3D->EndScene();
-
-	//std::cout << m_baseViewMatrix << std::endl;
 
 	return true;
 }

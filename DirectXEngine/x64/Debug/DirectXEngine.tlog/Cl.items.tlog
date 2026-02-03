@@ -1,7 +1,10 @@
 D:\Project Repos\DirectXEngine\DirectXEngine\AlphamapShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\AlphamapShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\Applicationclass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\BlueShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\BlueShaderClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\BlurClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\BlurClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ClipPlaneShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ClipPlaneShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\DepthShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\DepthShaderClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\DepthToBWShadowMap.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\DepthToBWShadowMap.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\DisplayPlaneClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\DisplayPlaneClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\DisplayPlaneClass.h;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\DisplayPlaneClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\FogShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\FogShaderClass.obj
@@ -15,6 +18,7 @@ D:\Project Repos\DirectXEngine\DirectXEngine\LightmapShaderClass.cpp;D:\Project 
 D:\Project Repos\DirectXEngine\DirectXEngine\ModelListClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ModelListClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\MultitextureShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\MultitextureShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\NormalMapShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\NormalMapShaderClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\OrthoWindowClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\OrthoWindowClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ParticleShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ParticleShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ParticleSystemClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ParticleSystemClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\PositionClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\PositionClass.obj

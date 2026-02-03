@@ -21,8 +21,11 @@
   <ItemGroup>
     <ClCompile Include="AlphamapShaderClass.cpp" />
     <ClCompile Include="Applicationclass.cpp" />
+    <ClCompile Include="BlueShaderClass.cpp" />
+    <ClCompile Include="BlurClass.cpp" />
     <ClCompile Include="ClipPlaneShaderClass.cpp" />
     <ClCompile Include="DepthShaderClass.cpp" />
+    <ClCompile Include="DepthToBWShadowMap.cpp" />
     <ClCompile Include="DisplayPlaneClass.cpp" />
     <ClCompile Include="DisplayPlaneClass.h" />
     <ClCompile Include="FogShaderClass.cpp" />
@@ -36,6 +39,7 @@
     <ClCompile Include="ModelListClass.cpp" />
     <ClCompile Include="MultitextureShaderClass.cpp" />
     <ClCompile Include="NormalMapShaderClass.cpp" />
+    <ClCompile Include="OrthoWindowClass.cpp" />
     <ClCompile Include="ParticleShaderClass.cpp" />
     <ClCompile Include="ParticleSystemClass.cpp" />
     <ClCompile Include="PositionClass.cpp" />
@@ -69,8 +73,11 @@
   <ItemGroup>
     <ClInclude Include="AlphamapShaderClass.h" />
     <ClInclude Include="Applicationclass.h" />
+    <ClInclude Include="BlurClass.h" />
+    <ClInclude Include="BlurShaderClass.h" />
     <ClInclude Include="ClipPlaneShaderClass.h" />
     <ClInclude Include="DepthShaderClass.h" />
+    <ClInclude Include="DepthToBWShadowMap.h" />
     <ClInclude Include="FogShaderClass.h" />
     <ClInclude Include="FontClass.h" />
     <ClInclude Include="FontShaderClass.h" />
@@ -82,6 +89,7 @@
     <ClInclude Include="ModelList.Class.h" />
     <ClInclude Include="MultitextureShaderClass.h" />
     <ClInclude Include="NormalMapShaderClass.h" />
+    <ClInclude Include="OrthoWindowClass.h" />
     <ClInclude Include="ParticleShaderClass.h" />
     <ClInclude Include="ParticleSystemClass.h" />
     <ClInclude Include="PositionClass.h" />
@@ -113,12 +121,18 @@
   <ItemGroup>
     <None Include="Alphamap.ps" />
     <None Include="Alphamap.vs" />
+    <None Include="Blur.ps" />
+    <None Include="Blur.vs" />
     <None Include="Clipplane.ps" />
     <None Include="Clipplane.vs" />
     <None Include="color.ps" />
     <None Include="color.vs" />
     <None Include="Depth.ps" />
     <None Include="Depth.vs" />
+    <None Include="DepthToBWShadowMap.vs">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="DepthToBWShadowMap.ps" />
     <None Include="Fog.ps" />
     <None Include="Fog.vs" />
     <None Include="font.ps" />

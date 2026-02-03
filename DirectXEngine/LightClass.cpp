@@ -6,6 +6,7 @@
 
 LightClass::LightClass()
 {
+    IsOrtho = false;
 }
 
 
@@ -138,5 +139,20 @@ void LightClass::GetViewMatrix(XMMATRIX& viewMatrix)
 void LightClass::GetProjectionMatrix(XMMATRIX& projectionMatrix)
 {
     projectionMatrix = m_projectionMatrix;
+    return;
+}
+
+void LightClass::GenerateOrthoMatrix(float width, float nearPlane, float depthPlane)
+{
+
+    // Create the orthographic for the light
+    m_orthoMatrix = XMMatrixOrthographicLH(width, width, nearPlane, depthPlane);
+    IsOrtho = true;
+    return;
+}
+
+void LightClass::GetOrthoMatrix(XMMATRIX& orthoMatrix)
+{
+    orthoMatrix = m_orthoMatrix;
     return;
 }

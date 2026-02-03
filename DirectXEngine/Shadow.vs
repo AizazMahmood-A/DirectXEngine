@@ -21,6 +21,9 @@ cbuffer MatrixBuffer
 
     matrix lightViewMatrix3;
 	matrix lightProjectionMatrix3;
+
+	matrix directionalLightViewMatrix;
+	matrix directionalLightProjectionMatrix;
 };
 
 cbuffer LightPositionBuffer
@@ -48,12 +51,14 @@ struct PixelInputType
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
-	float4 lightViewPosition : TEXCOORD1;
-	float3 lightPos : TEXCOORD2;
-	float4 lightViewPosition2 : TEXCOORD3;
-	float3 lightPos2 : TEXCOORD4;
-	float3 lightViewPosition3 : TEXCOORD5;
-	float3 lightPos3 : TEXCOORD6;
+	float4 viewPosition : TEXCOORD1;
+	float4 lightViewPosition : TEXCOORD2;
+	float3 lightPos : TEXCOORD3;
+	float4 lightViewPosition2 : TEXCOORD4;
+	float3 lightPos2 : TEXCOORD5;
+	float4 lightViewPosition3 : TEXCOORD6;
+	float3 lightPos3 : TEXCOORD7;
+	float4 directionalLightViewPosition : TEXCOORD8;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +78,8 @@ PixelInputType ShadowVertexShader(VertexInputType input)
     output.position = mul(output.position, projectionMatrix);
 
 	// Calculate the position of the vertice as viewed by the light source.
-	output.lightViewPosition = mul(input.position, worldMatrix);
+    output.lightViewPosition = output.position;//mul(input.position, worldMatrix);
+	/*
     output.lightViewPosition = mul(output.lightViewPosition, lightViewMatrix);
     output.lightViewPosition = mul(output.lightViewPosition, lightProjectionMatrix);
 
@@ -81,6 +87,19 @@ PixelInputType ShadowVertexShader(VertexInputType input)
     output.lightViewPosition2 = mul(input.position, worldMatrix);
     output.lightViewPosition2 = mul(output.lightViewPosition2, lightViewMatrix2);
     output.lightViewPosition2 = mul(output.lightViewPosition2, lightProjectionMatrix2);
+
+	// Calculate the position of the vertice as viewed by the second light source.
+    output.lightViewPosition3 = mul(input.position, worldMatrix);
+    output.lightViewPosition3 = mul(output.lightViewPosition3, lightViewMatrix3);
+    output.lightViewPosition3 = mul(output.lightViewPosition3, lightProjectionMatrix3);
+
+	// Calculate the position of the vertice as viewed by the second light source.
+    output.directionalLightViewPosition = mul(input.position, worldMatrix);
+    output.directionalLightViewPosition = mul(output.directionalLightViewPosition, directionalLightViewMatrix);
+    output.directionalLightViewPosition = mul(output.directionalLightViewPosition, directionalLightProjectionMatrix);
+*/
+	// Store the position of the vertice as viewed by the camera in a separate variable.
+	output.viewPosition = output.position;
 
 	// Store the texture coordinates for the pixel shader.
 	output.tex = input.tex;
@@ -94,17 +113,14 @@ PixelInputType ShadowVertexShader(VertexInputType input)
     // Calculate the position of the vertex in the world.
     worldPosition = mul(input.position, worldMatrix);
 
-	// Determine the light position based on the position of the light and the position of the vertex in the world.
     output.lightPos = lightPosition.xyz - worldPosition.xyz;
-
-    // Normalize the light position vector.
     output.lightPos = normalize(output.lightPos);
 
-    // Determine the second light position based on the position of the light and the position of the vertex in the world.
     output.lightPos2 = lightPosition2.xyz - worldPosition.xyz;
-
-    // Normalize the second light position vector.
     output.lightPos2 = normalize(output.lightPos2);
+
+	output.lightPos3 = lightPosition3.xyz - worldPosition.xyz;
+	output.lightPos3 = normalize(output.lightPos3);
 
     return output;
 }
