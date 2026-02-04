@@ -171,6 +171,9 @@
     <ClInclude Include="DepthToBWShadowMap.h">
       <Filter>Header Files\ShaderClasses</Filter>
     </ClInclude>
+    <ClInclude Include="TransparentDepthShaderClass.h">
+      <Filter>Header Files\ShaderClasses</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -323,6 +326,9 @@
     <ClCompile Include="DepthToBWShadowMap.cpp">
       <Filter>Source Files\ShaderClasses</Filter>
     </ClCompile>
+    <ClCompile Include="TransparentDepthShaderClass.cpp">
+      <Filter>Source Files\ShaderClasses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="color.vs">
@@ -463,6 +469,12 @@
     <None Include="DepthToBWShadowMap.vs">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="TransparentDepth.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="TransparentDepth.ps">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="pic8026.gif">
@@ -510,6 +522,9 @@
     <Image Include="data\spec02.tga">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="data\leaf001.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="cube.txt">
@@ -525,6 +540,9 @@
       <Filter>Resource Files\font</Filter>
     </Text>
     <Text Include="data\square.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="data\leaf001.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

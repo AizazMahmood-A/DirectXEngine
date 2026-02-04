@@ -62,6 +62,10 @@ ApplicationClass::ApplicationClass()
 	m_Blur = 0;
 	m_BlurShader = 0;
 	m_depthToBWShadowMap = 0;
+
+	m_TreeTrunkModel = 0;
+	m_TreeLeafModel = 0;
+	m_TransparentDepthShader = 0;
 }
 
 
@@ -101,14 +105,14 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera = new CameraClass;
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -13.0f);
 	m_Camera->Render();
 	m_Camera->RenderBaseViewMatrix();
 	m_Camera->GetBaseViewMatrix(m_baseViewMatrix);
 
 	//m_Camera->SetRotation(35.0f, 0.0f, 0.0f);
-	m_Camera->SetPosition(0.0f, 8.0f, -10.0f);
-	m_Camera->SetRotation(35.0f, 0.0f, 0.0f);
+	m_Camera->SetPosition(0.0f, 8.0f, -13.0f);
+	m_Camera->SetRotation(20.0f, 0.0f, 0.0f);
 	m_Camera->Render();
 	//m_Camera->SetPosition(0.0f, 0.0f, 0.0f);
 
@@ -126,22 +130,6 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the number of lights we will use.
 	m_numLights = 5;
 
-	// Manually set the color and position of each light.
-	//m_Lights[0].SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);  // Red
-	//m_Lights[0].SetPosition(-3.0f, 1.0f, 3.0f);
-
-	//m_Lights[1].SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);  // Green
-	//m_Lights[1].SetPosition(3.0f, 1.0f, 3.0f);
-
-	//m_Lights[2].SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);  // Blue
-	//m_Lights[2].SetPosition(-3.0f, 1.0f, -3.0f);
-
-	//m_Lights[3].SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);  // White
-	//m_Lights[3].SetPosition(3.0f, 1.0f, -3.0f);
-
-	//m_Lights[4].SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);  // Purple
-	//m_Lights[4].SetPosition(0.0f, 1.0f, 0.0f);
-
 	// Create and Initialize the normal map shader object.
 	m_ShaderManager = new ShaderManagerClass;
 
@@ -151,7 +139,33 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	strcpy_s(modelFilename, "../DirectXEngine/data/sphere.txt"); // ExcaliburMesh.obj");//sphere.txt
+	// Create and initialize the tree trunk model object.
+	m_TreeTrunkModel = new ModelClass;
+
+	strcpy_s(modelFilename, "../DirectXEngine/data/trunk001.txt");
+	strcpy_s(textureFilename, "../DirectXEngine/data/trunk001.tga");
+
+	result = m_TreeTrunkModel->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename, textureFilename, textureFilename);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the tree trunk model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create and initialize the tree leaf model object.
+	m_TreeLeafModel = new ModelClass;
+
+	strcpy_s(modelFilename, "../DirectXEngine/data/leaf001.txt");
+	strcpy_s(textureFilename, "../DirectXEngine/data/leaf001.tga");
+
+	result = m_TreeLeafModel->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename, textureFilename, textureFilename);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the tree leaf model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	strcpy_s(modelFilename, "../DirectXEngine/data/sphere.txt");
 	strcpy_s(textureFilename, "../DirectXEngine/data/ice.tga");
 
 	// Create and initialize the ground model object.
@@ -176,7 +190,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	strcpy_s(modelFilename, "../DirectXEngine/data/cube.txt");
+	strcpy_s(modelFilename, "../DirectXEngine/data/ExcaliburMesh.obj");
 	strcpy_s(textureFilename, "../DirectXEngine/data/wall01.tga");
 
 	// Create and initialize the cube model object.
@@ -388,6 +402,16 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create and initialize the transparent depth shader object.
+	m_TransparentDepthShader = new TransparentDepthShaderClass;
+
+	result = m_TransparentDepthShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the transparent depth shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the position class object.
 	m_Position = new PositionClass;
 
@@ -431,7 +455,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	light = new LightClass;
 	light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	light->SetDiffuseColor(0.75f, 1.0f, 0.75f, 1.0f);
 	light->SetLookAt(0.0f, 0.0f, 0.0f);
 	light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
@@ -460,7 +484,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	light = new LightClass;
 	light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	light->SetDiffuseColor(0.75f, 0.75f, 1.0f, 1.0f);
 	light->SetLookAt(0.0f, 0.0f, 0.0f);
 	light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
@@ -522,6 +546,27 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void ApplicationClass::Shutdown()
 {
+
+	if (m_TreeTrunkModel)
+	{
+		m_TreeTrunkModel->Shutdown();
+		delete m_TreeTrunkModel;
+		m_TreeTrunkModel = 0;
+	}
+
+	if (m_TreeLeafModel)
+	{
+		m_TreeLeafModel->Shutdown();
+		delete m_TreeLeafModel;
+		m_TreeLeafModel = 0;
+	}
+
+	if (m_TransparentDepthShader)
+	{
+		m_TransparentDepthShader->Shutdown();
+		delete m_TransparentDepthShader;
+		m_TransparentDepthShader = 0;
+	}
 
 	if (m_depthToBWShadowMap)
 	{
@@ -826,7 +871,7 @@ void ApplicationClass::Shutdown()
 }
 
 static float rotation = 360.0f;
-//static float textureTranslation = 0.0f;
+
 bool ApplicationClass::Frame(InputClass* Input)
 {
 	static float lightPositionX = -5.0f;
@@ -912,7 +957,7 @@ bool ApplicationClass::Frame(InputClass* Input)
 	lightPositionArray[2] = XMFLOAT3(-5.0f, 8.0f, 5.0f);
 	lightPositionArray[3] = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < m_LightDataSize; i++)
 	{
 		LightData* light = &m_LightData[i];
 		XMFLOAT3 pos = lightPositionArray[i];
@@ -1085,8 +1130,33 @@ bool ApplicationClass::RenderDepthToTexture(RenderTextureClass* renderTexture, L
 		light->GetProjectionMatrix(lightProjectionMatrix);
 	}
 
+	// Setup the translation matrix for the tree model.
+	translateMatrix = ApplyTransformations(XMMatrixTranslation(0.0f, 1.0f, 0.0f), 
+		XMMatrixScaling(0.1f, 0.1f, 0.1f), XMMatrixRotationX(0.0f));
+
+	// Render the tree trunk model using the depth shader.
+	m_TreeTrunkModel->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_DepthShader->Render(m_Direct3D->GetDeviceContext(), m_TreeTrunkModel->GetIndexCount(), translateMatrix, lightViewMatrix, lightProjectionMatrix);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Render the tree leaf model using the transparent depth shader.
+	m_TreeLeafModel->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_TransparentDepthShader->Render(m_Direct3D->GetDeviceContext(), m_TreeLeafModel->GetIndexCount(), translateMatrix, lightViewMatrix, lightProjectionMatrix,
+		m_TreeLeafModel->GetTexture(0));
+	if (!result)
+	{
+		return false;
+	}
+
+
 	// Setup the translation matrix for the cube model.
-	translateMatrix = XMMatrixTranslation(-2.0f, 2.0f, 0.0f);
+	translateMatrix = XMMatrixTranslation(-2.0f, 1.0f, -3.0f);
+	translateMatrix = ApplyTransformations(translateMatrix, XMMatrixScaling(0.015f, 0.015f, 0.015f), XMMatrixRotationX(0.0f));
 
 	// Render the cube model using the depth shader.
 	m_CubeModel->Render(m_Direct3D->GetDeviceContext());
@@ -1099,7 +1169,6 @@ bool ApplicationClass::RenderDepthToTexture(RenderTextureClass* renderTexture, L
 
 	// Setup the translation matrix for the sphere model.
 	translateMatrix = XMMatrixTranslation(2.0f, 2.0f, 0.0f);
-	translateMatrix = ApplyTransformations(translateMatrix, XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixRotationX(0.0f));
 
 	// Render the sphere model using the depth shader.
 	m_SphereModel->Render(m_Direct3D->GetDeviceContext());
@@ -1112,6 +1181,7 @@ bool ApplicationClass::RenderDepthToTexture(RenderTextureClass* renderTexture, L
 
 	// Setup the translation matrix for the ground model.
 	translateMatrix = XMMatrixTranslation(0.0f, 1.0f, 0.0f);
+	translateMatrix = ApplyTransformations(translateMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f), XMMatrixRotationX(0.0f));
 
 	// Render the ground model using the depth shader.
 	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
@@ -1144,10 +1214,42 @@ bool ApplicationClass::RenderBlackAndWhiteShadows(RenderTextureClass* blackWhite
 
 	// Get the View and orthographic matrices from the light object.
 	light->GetViewMatrix(lightViewMatrix);
-	light->GetProjectionMatrix(lightProjectionMatrix);
+	if (light->IsOrtho)
+	{
+		light->GetOrthoMatrix(lightProjectionMatrix);
+	}
+	else
+	{
+		light->GetProjectionMatrix(lightProjectionMatrix);
+	}
+
+	// Setup the translation matrix for the tree model.
+	translateMatrix = ApplyTransformations(XMMatrixTranslation(0.0f, 1.0f, 0.0f),
+		XMMatrixScaling(0.1f, 0.1f, 0.1f), XMMatrixRotationX(0.0f));
+
+	// Render the tree trunk model using the depth shader.
+	m_TreeTrunkModel->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_depthToBWShadowMap->Render(m_Direct3D->GetDeviceContext(), m_TreeTrunkModel->GetIndexCount(), translateMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+		depthTexture->GetShaderResourceView(), light->GetPosition(), m_shadowMapBias);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Render the tree leaf model using the transparent depth shader.
+	m_TreeLeafModel->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_depthToBWShadowMap->Render(m_Direct3D->GetDeviceContext(), m_TreeLeafModel->GetIndexCount(), translateMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+		depthTexture->GetShaderResourceView(), light->GetPosition(), m_shadowMapBias);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Setup the translation matrix for the cube model.
-	translateMatrix = XMMatrixTranslation(-2.0f, 2.0f, 0.0f);
+	translateMatrix = XMMatrixTranslation(-2.0f, 1.0f, -3.0f);
+	translateMatrix = ApplyTransformations(translateMatrix, XMMatrixScaling(0.015f, 0.015f, 0.015f), XMMatrixRotationX(0.0f));
 
 	// Render the cube model using the depth shader.
 	m_CubeModel->Render(m_Direct3D->GetDeviceContext());
@@ -1162,7 +1264,6 @@ bool ApplicationClass::RenderBlackAndWhiteShadows(RenderTextureClass* blackWhite
 
 	// Setup the translation matrix for the sphere model.
 	translateMatrix = XMMatrixTranslation(2.0f, 2.0f, 0.0f);
-	translateMatrix = ApplyTransformations(translateMatrix, XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixRotationX(0.0f));
 
 	// Render the sphere model using the depth shader.
 	m_SphereModel->Render(m_Direct3D->GetDeviceContext());
@@ -1177,6 +1278,7 @@ bool ApplicationClass::RenderBlackAndWhiteShadows(RenderTextureClass* blackWhite
 
 	// Setup the translation matrix for the ground model.
 	translateMatrix = XMMatrixTranslation(0.0f, 1.0f, 0.0f);
+	translateMatrix = ApplyTransformations(translateMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f), XMMatrixRotationX(0.0f));
 
 	// Render the ground model using the depth shader.
 	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
@@ -1212,7 +1314,7 @@ bool ApplicationClass::RenderSceneToTexture(float rotation)
 
 	// Setup the translation matrix for the cube model.
 	worldMatrix = XMMatrixTranslation(-2.0f, 2.0f, 0.0f);
-
+	worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(0.015f, 0.015f, 0.015f), XMMatrixRotationX(0.0f));
 	// Render the cube model using the shadow shader.
 	m_CubeModel->Render(m_Direct3D->GetDeviceContext());
 	//lightPosition = XMFLOAT3(m_Light->GetPosition().x, m_Light->GetPosition().y, m_Light->GetPosition().z);
@@ -1227,7 +1329,7 @@ bool ApplicationClass::RenderSceneToTexture(float rotation)
 
 	// Setup the translation matrix for the sphere model.
 	worldMatrix = XMMatrixTranslation(2.0f, 2.0f, 0.0f);
-	worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixRotationX(0.0f));
+	//worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixRotationX(0.0f));
 
 	// Render the sphere model using the shadow shader.
 	m_SphereModel->Render(m_Direct3D->GetDeviceContext());
@@ -1294,34 +1396,24 @@ bool ApplicationClass::Render()
 
 	// Set the refraction scale for the glass shader.
 	refractionScale = 0.1f;
-	
+
 	// Clear the buffers to begin the scene.
 	m_Direct3D->BeginScene(fogColor, fogColor, fogColor, 1.0f);
-	
+
 	// Get the world, view, projection matrices from the camera and d3d objects.
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Direct3D->GetProjectionMatrix(projectionMatrix);
 	m_Direct3D->GetOrthoMatrix(orthoMatrix);
-	
+
 	// Set the light brightness.
 	brightness = 1.5f;
 
 	// Initialize the count of models that have been rendered.
 	renderCount = 0;
 
-	// Render the full screen ortho window.
-	//m_FullScreenWindow->Render(m_Direct3D->GetDeviceContext());
-
-	//// Render the full screen ortho window using the texture shader and the full screen sized blurred render to texture resource.
-	//result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_LightData[0].m_BlackWhiteRenderTexture->GetShaderResourceView());// m_RenderTexture->GetShaderResourceView());
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	
-	worldMatrix = XMMatrixTranslation(-2.0f, 2.0f, 0.0f);
+	worldMatrix = XMMatrixTranslation(-2.0f, 1.0f, -3.0f);
+	worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(0.015f, 0.015f, 0.015f), XMMatrixRotationX(0.0f));
 	// Render the cube model using the shadow shader.
 	m_CubeModel->Render(m_Direct3D->GetDeviceContext());
 
@@ -1334,11 +1426,9 @@ bool ApplicationClass::Render()
 
 	// Setup the translation matrix for the sphere model.
 	worldMatrix = XMMatrixTranslation(2.0f, 2.0f, 0.0f);
-	worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixRotationX(0.0f));
 
 	// Render the sphere model using the shadow shader.
 	m_SphereModel->Render(m_Direct3D->GetDeviceContext());
-	//lightPosition = XMFLOAT3(m_Light->GetPosition().x, m_Light->GetPosition().y, m_Light->GetPosition().z);
 
 	result = m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_SphereModel->GetTexture(0), m_LightData, m_LightDataSize);
@@ -1350,6 +1440,7 @@ bool ApplicationClass::Render()
 
 	// Setup the translation matrix for the ground model.
 	worldMatrix = XMMatrixTranslation(0.0f, 1.0f, 0.0f);
+	worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f), XMMatrixRotationX(0.0f));
 
 	// Render the ground model using the shadow shader.
 	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
@@ -1361,9 +1452,34 @@ bool ApplicationClass::Render()
 	{
 		return false;
 	}
+
+	// Setup the translation matrix for the tree model.
+	worldMatrix = ApplyTransformations(XMMatrixTranslation(0.0f, 1.0f, 0.0f),
+		XMMatrixScaling(0.1f, 0.1f, 0.1f), XMMatrixRotationX(0.0f));
+
+	// Render the tree trunk model using the depth shader.
+	m_TreeTrunkModel->Render(m_Direct3D->GetDeviceContext());
 	
+	result = m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_TreeTrunkModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_TreeTrunkModel->GetTexture(0), m_LightData, m_LightDataSize);
+	if (!result)
+	{
+		return false;
+	}
+
 	// Turn on alpha blending for the transparency to work.
 	m_Direct3D->EnableAlphaBlending();
+
+	// Enable alpha transparency before drawing the leaf model.
+	// Render the tree leaf model using the transparent depth shader.
+	m_TreeLeafModel->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_TreeLeafModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_TreeLeafModel->GetTexture(0), m_LightData, m_LightDataSize);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Reset the world matrix.
 	m_Direct3D->GetWorldMatrix(worldMatrix);
@@ -1408,13 +1524,12 @@ bool ApplicationClass::Render()
 	// Enable the Z buffer and disable alpha blending now that 2D rendering is complete.
 	m_Direct3D->TurnZBufferOn();
 	m_Direct3D->DisableAlphaBlending();
-	
+
 	// Present the rendered scene to the screen.
 	m_Direct3D->EndScene();
 
 	return true;
 }
-
 
 bool ApplicationClass::UpdateRenderCountString(int renderCount)
 {
@@ -1438,7 +1553,6 @@ bool ApplicationClass::UpdateRenderCountString(int renderCount)
 
 	return true;
 }
-
 
 bool ApplicationClass::UpdateMouseStrings(int mouseX, int mouseY, bool mouseDown)
 {
@@ -1493,7 +1607,6 @@ bool ApplicationClass::UpdateMouseStrings(int mouseX, int mouseY, bool mouseDown
 	return true;
 
 }
-
 
 bool ApplicationClass::UpdateFPS()
 {

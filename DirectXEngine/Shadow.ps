@@ -22,17 +22,17 @@ SamplerState SampleTypeWrap : register(s1);
 //////////////
 struct PixelInputType
 {
-	float4 position : SV_POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float4 viewPosition : TEXCOORD1;
-	float4 lightViewPosition : TEXCOORD2;
-	float3 lightPos : TEXCOORD3;
-	float4 lightViewPosition2 : TEXCOORD4;
-	float3 lightPos2 : TEXCOORD5;
-	float4 lightViewPosition3 : TEXCOORD6;
-	float3 lightPos3 : TEXCOORD7;
-	float4 directionalLightViewPosition : TEXCOORD8;
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
+    float4 viewPosition : TEXCOORD1;
+    float4 lightViewPosition : TEXCOORD2;
+    float3 lightPos : TEXCOORD3;
+    float4 lightViewPosition2 : TEXCOORD4;
+    float3 lightPos2 : TEXCOORD5;
+    float4 lightViewPosition3 : TEXCOORD6;
+    float3 lightPos3 : TEXCOORD7;
+    float4 directionalLightViewPosition : TEXCOORD8;
 };
 
 
@@ -66,45 +66,25 @@ float4 ShadowPixelShader(PixelInputType input) : SV_TARGET
     color = ambientColor;
 
     input.normal = normalize(input.normal);
-    /*
-    // Invert the directional light direction.
-    directionalLightDir = -directionalLightDirection;
-    //return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    
+
     /////////////////////
     // directional light //
     ////////////////////
-
+    
+    directionalLightDir = -directionalLightDirection;
+    
+    // Calculate the amount of light on this pixel.
+    lightIntensity = saturate(dot(input.normal, directionalLightDir));
+    
     // Calculate the projected texture coordinates.
-    projectTexCoord.x =  input.directionalLightViewPosition.x / input.directionalLightViewPosition.w / 2.0f + 0.5f;
-    projectTexCoord.y = -input.directionalLightViewPosition.y / input.directionalLightViewPosition.w / 2.0f + 0.5f;
-
-    // Determine if the projected coordinates are in the 0 to 1 range. if it is then this pixel is inside the projected view port.
-    if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-    {
-        // Sample the shadow map depth value from the depth texture using the sampler at the projected texture coordinate location.
-        depthValue = directionalDepthMap.Sample(SampleTypeClamp, projectTexCoord).r;
-
-        // Calculate the depth of the light.
-        lightDepthValue = input.directionalLightViewPosition.z / input.directionalLightViewPosition.w;
-
-        // Subtract the bias from the lightDepthValue.
-        lightDepthValue = lightDepthValue - bias;
-
-        // Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
-        // if the light is in front of the object then light the pixel, if not then shadow this pixel since an object (occluder) is casting a shadow on it.
-        if(lightDepthValue < depthValue)
-        {
-            // Calculate the amount of light on this pixel.
-            lightIntensity = saturate(dot(input.normal, directionalLightDir));
-
-            if(lightIntensity > 0.0f)
-            {
-                // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-                //color += (diffuseColor * lightIntensity);
-            }
-        }
-    }
-    */
+    projectTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
+    projectTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w / 2.0f + 0.5f;
+    
+    depthValue = directionalDepthMap.Sample(SampleTypeClamp, projectTexCoord).r;
+    color += (diffuseColor * lightIntensity) * depthValue;
+    color = saturate(color);
+    
     /*
     else
     {
@@ -124,75 +104,48 @@ float4 ShadowPixelShader(PixelInputType input) : SV_TARGET
     
     // Calculate the amount of light on this pixel.
     lightIntensity = saturate(dot(input.normal, input.lightPos));
-
-    if (lightIntensity > 0.0f)
-    {
-        // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-        color += (diffuseColor * lightIntensity);
-        color = saturate(color);
-    }
     
     // Calculate the projected texture coordinates.
-    projectTexCoord.x =  input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
+    projectTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
     projectTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w / 2.0f + 0.5f;
     
     depthValue = depthMapTexture.Sample(SampleTypeClamp, projectTexCoord).r;
-    color = color * depthValue;
-    //return float4(depthValue, depthValue, depthValue, 1.0f);
+    //color += (diffuseColor * lightIntensity) * depthValue;
+    //color = saturate(color);
     
     ////////////////
     // Second light //
     ////////////////
     
-    //projectTexCoord.x =  input.lightViewPosition2.x / input.lightViewPosition2.w / 2.0f + 0.5f;
-    //projectTexCoord.y = -input.lightViewPosition2.y / input.lightViewPosition2.w / 2.0f + 0.5f;
-    //depthValue = depthMapTexture2.Sample(SampleTypeClamp, projectTexCoord).r;
-    //color += diffuseColor * depthValue;
-    //if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-    //{
-    //    depthValue = depthMapTexture2.Sample(SampleTypeClamp, projectTexCoord).r;
-
-    //    lightDepthValue = input.lightViewPosition2.z / input.lightViewPosition2.w;
-    //    lightDepthValue = lightDepthValue - bias;
-
-    //    if(lightDepthValue < depthValue)
-    //    {
-    //        lightIntensity = saturate(dot(input.normal, input.lightPos2));
-    //        if(lightIntensity > 0.0f)
-    //        {
-    //            //color += (diffuseColor2 * lightIntensity);
-    //        }
-    //    }
-    //}
+    // Calculate the amount of light on this pixel.
+    lightIntensity = saturate(dot(input.normal, input.lightPos2));
+    
+    // Calculate the projected texture coordinates.
+    projectTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
+    projectTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w / 2.0f + 0.5f;
+    
+    depthValue = depthMapTexture2.Sample(SampleTypeClamp, projectTexCoord).r;
+    //color += (diffuseColor2 * lightIntensity) * depthValue;
+    //color = saturate(color);
 
     
      ////////////////
     // third light //
     ////////////////
-
-    //projectTexCoord.x =  input.lightViewPosition3.x / input.lightViewPosition3.w / 2.0f + 0.5f;
-    //projectTexCoord.y = -input.lightViewPosition3.y / input.lightViewPosition3.w / 2.0f + 0.5f;
-    //depthValue = depthMapTexture3.Sample(SampleTypeClamp, projectTexCoord).r;
-    //color += diffuseColor * depthValue;
-    //if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-    //{
-    //    depthValue = depthMapTexture3.Sample(SampleTypeClamp, projectTexCoord).r;
-
-    //    lightDepthValue = input.lightViewPosition3.z / input.lightViewPosition3.w;
-    //    lightDepthValue = lightDepthValue - bias;
-
-    //    if(lightDepthValue < depthValue)
-    //    {
-    //        lightIntensity = saturate(dot(input.normal, input.lightPos3));
-    //        if(lightIntensity > 0.0f)
-    //        {
-    //            //color += (diffuseColor3 * lightIntensity);
-    //        }
-    //    }
-    //}
+    
+    // Calculate the amount of light on this pixel.
+    lightIntensity = saturate(dot(input.normal, input.lightPos3));
+    
+    // Calculate the projected texture coordinates.
+    projectTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
+    projectTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w / 2.0f + 0.5f;
+    
+    depthValue = depthMapTexture3.Sample(SampleTypeClamp, projectTexCoord).r;
+    //color += (diffuseColor3 * lightIntensity) * depthValue;
+    //color = saturate(color);
     
     // Saturate the final light color.
-    color = saturate(color);
+    //color = saturate(color);
 
     // Sample the pixel color from the texture using the sampler at this texture coordinate location.
     textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);

@@ -1,2 +1,4 @@
-﻿  BlurClass.cpp
+﻿  D3DClass.cpp
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.h(61,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.h(62,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
   DirectXEngine.vcxproj -> D:\Project Repos\DirectXEngine\x64\Debug\DirectXEngine.exe

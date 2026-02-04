@@ -65,6 +65,7 @@
     <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="TimerClass.cpp" />
     <ClCompile Include="TranslateShaderClass.cpp" />
+    <ClCompile Include="TransparentDepthShaderClass.cpp" />
     <ClCompile Include="TransparentShaderClass.cpp" />
     <ClCompile Include="Utils.h" />
     <ClCompile Include="ViewpointClass.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="TimerClass.h" />
     <ClInclude Include="TranslateShaderClass.h" />
+    <ClInclude Include="TransparentDepthShaderClass.h" />
     <ClInclude Include="TransparentShaderClass.h" />
     <ClInclude Include="ViewpointClass.h" />
     <ClInclude Include="WaterShaderClass.h" />
@@ -165,6 +167,8 @@
     <None Include="Translate.vs" />
     <None Include="Transparent.ps" />
     <None Include="Transparent.vs" />
+    <None Include="TransparentDepth.ps" />
+    <None Include="TransparentDepth.vs" />
     <None Include="Water.ps" />
     <None Include="Water.vs" />
   </ItemGroup>
@@ -173,6 +177,7 @@
     <Image Include="data\dirt01.tga" />
     <Image Include="data\fern.tga" />
     <Image Include="data\font\font01.tga" />
+    <Image Include="data\leaf001.tga" />
     <Image Include="data\light01.tga" />
     <Image Include="data\normal01.tga" />
     <Image Include="data\normal02.tga" />
@@ -188,6 +193,7 @@
   <ItemGroup>
     <Text Include="cube.txt" />
     <Text Include="data\font\font01.txt" />
+    <Text Include="data\leaf001.txt" />
     <Text Include="data\sphere.txt" />
     <Text Include="data\sprite_data_01.txt" />
     <Text Include="data\square.txt" />

@@ -60,6 +60,7 @@
 #include "BlurClass.h"
 #include "BlurShaderClass.h";
 #include "DepthToBWShadowMap.h";
+#include "TransparentDepthShaderClass.h"
 
 /////////////
 // GLOBALS //
@@ -98,11 +99,10 @@ private:
 	bool UpdateMouseStrings(int, int, bool);
 	bool UpdateRenderCountString(int);
 	bool RenderSceneToTexture(float);
-	//bool RenderReflectionToTexture(float);
-	//bool RenderRefractionToTexture();
+
 	bool RenderDepthToTexture(RenderTextureClass*, LightClass*);
 	bool RenderBlackAndWhiteShadows(RenderTextureClass* blackWhiteRenderTexture, LightClass* light, RenderTextureClass* depthTexture);
-	//bool RenderDepthToTexture2();
+
 
 private:
 	D3DClass* m_Direct3D;
@@ -118,7 +118,6 @@ private:
 	ModelClass** m_Models;
 	size_t m_modelCount;
 
-	//LightClass* m_Lights;
 	int m_numLights;
 
 	FontShaderClass* m_FontShader;
@@ -131,7 +130,7 @@ private:
 	ShaderManagerClass* m_ShaderManager;
 
 	TextClass* m_RenderCountString;
-	//ModelListClass* m_ModelList;
+
 	PositionClass* m_Position;
 	FrustumClass* m_Frustum;
 	XMMATRIX m_baseViewMatrix;
@@ -161,7 +160,9 @@ private:
 	BlurShaderClass* m_BlurShader;
 
 	DepthToBWShadowMap* m_depthToBWShadowMap;
-	
+
+	ModelClass* m_TreeTrunkModel, * m_TreeLeafModel;
+	TransparentDepthShaderClass* m_TransparentDepthShader;
 };
 
 #endif
