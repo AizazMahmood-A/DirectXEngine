@@ -3,11 +3,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "textureclass.h"
 
+
 TextureClass::TextureClass()
 {
 	m_targaData = 0;
 	m_texture = 0;
 	m_textureView = 0;
+	m_height = 0;
+	m_width = 0;
 }
 
 
@@ -32,7 +35,16 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 
 	// Load the targa image data into memory.
-	result = LoadTarga32Bit(filename);
+	result = false;
+	if (Utils::hasExtension(filename, "png"))
+	{
+		result = LoadPNG(filename);
+	}
+	else if (Utils::hasExtension(filename, "tga"))
+	{
+		result = LoadTarga32Bit(filename);
+	}
+
 	if (!result)
 	{
 		return false;
@@ -207,6 +219,42 @@ bool TextureClass::LoadTarga32Bit(char* filename)
 	return true;
 }
 
+
+bool TextureClass::LoadPNG(char* filename)
+{
+
+	int bpp, imageSize, index;
+
+	std::vector<unsigned char> image;
+	unsigned width, height;
+
+	unsigned error = lodepng::decode(image, width, height, filename);
+	if (error)
+	{
+		std::cout << "lode png error : " << lodepng_error_text(error) << "\n";
+		return false;
+	}
+
+	m_width = width;
+	m_height = height;
+
+	imageSize = width * height * 4;
+
+	m_targaData = new unsigned char[imageSize];
+
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			int index = (y * width + x) * 4;
+			m_targaData[index] = image[index];
+		}
+	}
+
+	std::cout << "Successfully read image into array." << std::endl;
+	std::cout << "Image dimensions: " << width << "x" << height << std::endl;
+	std::cout << "Array size: " << sizeof(m_targaData) << " bytes" << std::endl;
+
+	return true;
+}
 
 int TextureClass::GetWidth()
 {

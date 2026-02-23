@@ -9,7 +9,9 @@
 //////////////
 #include <d3d11.h>
 #include <stdio.h>
-
+#include <iostream>
+#include "lodepng.h"
+#include "Utils.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: TextureClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,6 +42,7 @@ public:
 
 private:
 	bool LoadTarga32Bit(char*);
+	bool LoadPNG(char*);
 
 private:
 	unsigned char* m_targaData;

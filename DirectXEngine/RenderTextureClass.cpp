@@ -31,7 +31,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 	DXGI_FORMAT textureFormat;
-	
+
 	// Set the texture format.
 	switch (format)
 	{
@@ -84,6 +84,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 	{
 		return false;
 	}
+
 
 	// Setup the description of the shader resource view.
 	shaderResourceViewDesc.Format = textureDesc.Format;

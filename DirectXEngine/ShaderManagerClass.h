@@ -11,6 +11,8 @@
 #include "lightshaderclass.h"
 #include "normalmapshaderclass.h"
 #include "SpecmapShaderClass.h"
+#include "CameraClass.h"
+#include "LightClass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////

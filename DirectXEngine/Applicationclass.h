@@ -58,9 +58,12 @@
 
 #include "OrthoWindowClass.h"
 #include "BlurClass.h"
-#include "BlurShaderClass.h";
-#include "DepthToBWShadowMap.h";
+#include "BlurShaderClass.h"
+#include "DepthToBWShadowMap.h"
 #include "TransparentDepthShaderClass.h"
+#include "BitmapClass.h"
+#include "DeferredBuffersClass.h"
+#include "DeferredShaderClass.h"
 
 /////////////
 // GLOBALS //
@@ -71,8 +74,8 @@ const bool VSYNC_ENABLED = false;
 //const float SCREEN_DEPTH = 1000.0f;
 //const float SCREEN_NEAR = 0.3f;
 
-const float SCREEN_DEPTH = 100.0f;
-const float SCREEN_NEAR = 1.0f;
+const float SCREEN_DEPTH = 1000.0f;
+const float SCREEN_NEAR = 0.3f;
 const int SHADOWMAP_WIDTH = 1024;
 const int SHADOWMAP_HEIGHT = 1024;
 
@@ -96,13 +99,15 @@ public:
 private:
 	bool Render();
 	bool UpdateFPS();
-	bool UpdateMouseStrings(int, int, bool);
-	bool UpdateRenderCountString(int);
+
 	bool RenderSceneToTexture(float);
+	bool RenderSceneDeferredBuffer(float rotation);
 
-	bool RenderDepthToTexture(RenderTextureClass*, LightClass*);
-	bool RenderBlackAndWhiteShadows(RenderTextureClass* blackWhiteRenderTexture, LightClass* light, RenderTextureClass* depthTexture);
+	bool RenderDepthToTexture(RenderTextureClass* renderTexture, LightClass* light);
+	bool RenderBlackAndWhiteShadows(RenderTextureArrayClass* blackWhiteRenderTexture, LightClass* light, RenderTextureClass* depthTexture, int index);
 
+	bool TestIntersection(int, int);
+	bool RaySphereIntersect(XMFLOAT3, XMFLOAT3, float);
 
 private:
 	D3DClass* m_Direct3D;
@@ -125,20 +130,22 @@ private:
 	FPSClass* m_Fps;
 	TextClass* m_FpsString;
 	int m_previousFps;
-	TextClass* m_MouseStrings;
+	//TextClass* m_MouseStrings;
+	//TextClass* m_TextString;
+	BitmapClass* m_MouseBitmap;
 
 	ShaderManagerClass* m_ShaderManager;
 
-	TextClass* m_RenderCountString;
+	//TextClass* m_RenderCountString;
 
-	PositionClass* m_Position;
-	FrustumClass* m_Frustum;
+	//PositionClass* m_Position;
+	//FrustumClass* m_Frustum;
 	XMMATRIX m_baseViewMatrix;
 
 	ModelClass *m_GroundModel, *m_CubeModel, *m_SphereModel;
 
 	DepthShaderClass* m_DepthShader;
-	ShadowShaderClass* m_ShadowShader;
+	//ShadowShaderClass* m_ShadowShader;
 
 	ParticleShaderClass* m_ParticleShader;
 	ParticleSystemClass* m_ParticleSystem;
@@ -146,9 +153,9 @@ private:
 	ProjectionShaderClass* m_ProjectionShader;
 	TextureClass* m_ProjectionTexture;
 	ViewpointClass* m_Viewpoint;
-	LightClass *m_Light, *m_Light2;
+	//LightClass *m_Light, *m_Light2;
 
-	LightData *m_LightData;
+	LightData* m_LightData;
 	int m_LightDataSize;
 
 	float m_shadowMapBias;
@@ -163,6 +170,11 @@ private:
 
 	ModelClass* m_TreeTrunkModel, * m_TreeLeafModel;
 	TransparentDepthShaderClass* m_TransparentDepthShader;
+	int m_screenWidth, m_screenHeight;
+
+	DeferredBuffersClass* m_DeferredBuffers;
+	DeferredShaderClass* m_DeferredShader;
+	LightShaderClass* m_LightShader;
 };
 
 #endif

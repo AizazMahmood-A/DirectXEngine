@@ -21,9 +21,12 @@
   <ItemGroup>
     <ClCompile Include="AlphamapShaderClass.cpp" />
     <ClCompile Include="Applicationclass.cpp" />
+    <ClCompile Include="BitmapClass.cpp" />
     <ClCompile Include="BlueShaderClass.cpp" />
     <ClCompile Include="BlurClass.cpp" />
     <ClCompile Include="ClipPlaneShaderClass.cpp" />
+    <ClCompile Include="DeferredBuffersClass.cpp" />
+    <ClCompile Include="DeferredShaderClass.cpp" />
     <ClCompile Include="DepthShaderClass.cpp" />
     <ClCompile Include="DepthToBWShadowMap.cpp" />
     <ClCompile Include="DisplayPlaneClass.cpp" />
@@ -46,6 +49,7 @@
     <ClCompile Include="ProjectionShaderClass.cpp" />
     <ClCompile Include="ReflectionShaderClass.cpp" />
     <ClCompile Include="RefractionShaderClass.cpp" />
+    <ClCompile Include="RenderTextureArrayClass.cpp" />
     <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="ShaderManagerClass.cpp" />
     <ClCompile Include="ShadowShaderClass.cpp" />
@@ -74,9 +78,12 @@
   <ItemGroup>
     <ClInclude Include="AlphamapShaderClass.h" />
     <ClInclude Include="Applicationclass.h" />
+    <ClInclude Include="BitmapClass.h" />
     <ClInclude Include="BlurClass.h" />
     <ClInclude Include="BlurShaderClass.h" />
     <ClInclude Include="ClipPlaneShaderClass.h" />
+    <ClInclude Include="DeferredBuffersClass.h" />
+    <ClInclude Include="DeferredShaderClass.h" />
     <ClInclude Include="DepthShaderClass.h" />
     <ClInclude Include="DepthToBWShadowMap.h" />
     <ClInclude Include="FogShaderClass.h" />
@@ -97,6 +104,7 @@
     <ClInclude Include="ProjectionShaderClass.h" />
     <ClInclude Include="ReflectionShaderClass.h" />
     <ClInclude Include="RefractionShaderClass.h" />
+    <ClInclude Include="RenderTextureArrayClass.h" />
     <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="ShaderManagerClass.h" />
     <ClInclude Include="ShadowShaderClass.h" />
@@ -129,6 +137,8 @@
     <None Include="Clipplane.vs" />
     <None Include="color.ps" />
     <None Include="color.vs" />
+    <None Include="Deferred.ps" />
+    <None Include="Deferred.vs" />
     <None Include="Depth.ps" />
     <None Include="Depth.vs" />
     <None Include="DepthToBWShadowMap.vs">
@@ -149,6 +159,7 @@
     <None Include="Multitexture.vs" />
     <None Include="Normalmap.ps" />
     <None Include="Normalmap.vs" />
+    <None Include="packages.config" />
     <None Include="Particle.ps" />
     <None Include="Particle.vs" />
     <None Include="Projection.ps" />
@@ -292,6 +303,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -316,5 +328,14 @@
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\libpng-msvc-x64.1.6.33.8807\build\native\libpng-msvc-x64.targets" Condition="Exists('..\packages\libpng-msvc-x64.1.6.33.8807\build\native\libpng-msvc-x64.targets')" />
+    <Import Project="..\packages\LodePNG.1.2.0\build\native\lodepng.targets" Condition="Exists('..\packages\LodePNG.1.2.0\build\native\lodepng.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\libpng-msvc-x64.1.6.33.8807\build\native\libpng-msvc-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libpng-msvc-x64.1.6.33.8807\build\native\libpng-msvc-x64.targets'))" />
+    <Error Condition="!Exists('..\packages\LodePNG.1.2.0\build\native\lodepng.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LodePNG.1.2.0\build\native\lodepng.targets'))" />
+  </Target>
 </Project>

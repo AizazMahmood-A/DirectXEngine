@@ -107,9 +107,9 @@ bool ShaderManagerClass::RenderTextureShader(ID3D11DeviceContext* deviceContext,
 bool ShaderManagerClass::RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
 	ID3D11ShaderResourceView* texture, CameraClass* camera, LightClass* directionalLight, XMFLOAT4 diffuseColor[], XMFLOAT4 lightPosition[])
 {
-	bool result;
+	bool result = false;
 
-	result = m_LightShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, camera, directionalLight, diffuseColor, lightPosition);
+	//result = m_LightShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, camera, directionalLight, diffuseColor, lightPosition);
 	if (!result)
 	{
 		return false;

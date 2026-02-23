@@ -7,7 +7,10 @@
 //////////////
 // INCLUDES //
 //////////////
+#include <string>
 #include <directxmath.h>
+#include <d3d11.h>
+#include "RenderTextureClass.h"
 using namespace DirectX;
 
 
@@ -20,6 +23,9 @@ public:
 	LightClass();
 	LightClass(const LightClass&);
 	~LightClass();
+
+	bool InitializeShadowMaps(HWND hwnd, ID3D11Device* device, int textureWidth, int textureHeight, float screenDepth, float screenNear, int format);
+	RenderTextureClass* GetShadowMap();
 
 	void SetAmbientColor(float, float, float, float);
 	void SetDiffuseColor(float, float, float, float);
@@ -56,6 +62,9 @@ private:
 	XMMATRIX m_viewMatrix;
 	XMMATRIX m_projectionMatrix;
 	XMMATRIX m_orthoMatrix;
+
+	RenderTextureClass* m_depthMap;
+	//RenderTextureClass* m_blackWhiteRenderTexture;
 public:
 	bool IsOrtho = false;
 };

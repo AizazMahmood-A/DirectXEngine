@@ -1,4 +1,34 @@
-﻿  D3DClass.cpp
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.h(61,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.h(62,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+﻿  Applicationclass.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\include\format(43): warning STL4038: The contents of <format> are available only with C++20 or later.
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(83,43): warning C4101: 'mouseString3': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(82,7): warning C4101: 'renderString': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(80,27): warning C4101: 'modelFilename2': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(83,7): warning C4101: 'mouseString1': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(83,25): warning C4101: 'mouseString2': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(80,117): warning C4101: 'textureFilename4': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(80,71): warning C4101: 'textureFilename2': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(80,94): warning C4101: 'textureFilename3': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(80,48): warning C4101: 'textureFilename1': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(79,7): warning C4101: 'spriteFilename': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(782,35): warning C4101: 'intersect': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(784,19): warning C4101: 'cameraRotationY': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(782,26): warning C4101: 'keyDown': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(782,15): warning C4101: 'mouseDown': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(783,7): warning C4101: 'testString': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1123,41): warning C4101: 'radius': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1115,112): warning C4101: 'lightViewMatrix2': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1124,7): warning C4101: 'renderModel': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1122,18): warning C4101: 'renderCount': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1122,6): warning C4101: 'modelCount': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1123,8): warning C4101: 'positionX': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1119,11): warning C4101: 'lightPositions': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1115,130): warning C4101: 'lightProjectionMatrix2': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1115,72): warning C4101: 'lightViewMatrix': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1120,11): warning C4101: 'lightPosition': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1123,19): warning C4101: 'positionY': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1122,31): warning C4101: 'i': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1118,11): warning C4101: 'diffuseColors': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1115,89): warning C4101: 'lightProjectionMatrix': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1123,30): warning C4101: 'positionZ': unreferenced local variable
+D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp(1115,54): warning C4101: 'reflectionMatrix': unreferenced local variable
   DirectXEngine.vcxproj -> D:\Project Repos\DirectXEngine\x64\Debug\DirectXEngine.exe

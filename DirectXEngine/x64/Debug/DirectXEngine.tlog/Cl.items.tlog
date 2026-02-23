@@ -1,8 +1,11 @@
 D:\Project Repos\DirectXEngine\DirectXEngine\AlphamapShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\AlphamapShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\Applicationclass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\Applicationclass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\BitmapClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\BitmapClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\BlueShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\BlueShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\BlurClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\BlurClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ClipPlaneShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ClipPlaneShaderClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\DeferredBuffersClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\DeferredBuffersClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\DeferredShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\DeferredShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\DepthShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\DepthShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\DepthToBWShadowMap.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\DepthToBWShadowMap.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\DisplayPlaneClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\DisplayPlaneClass.obj
@@ -25,6 +28,7 @@ D:\Project Repos\DirectXEngine\DirectXEngine\PositionClass.cpp;D:\Project Repos\
 D:\Project Repos\DirectXEngine\DirectXEngine\ProjectionShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ProjectionShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ReflectionShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ReflectionShaderClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\RefractionShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\RefractionShaderClass.obj
+D:\Project Repos\DirectXEngine\DirectXEngine\RenderTextureArrayClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\RenderTextureArrayClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\RenderTextureClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\RenderTextureClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ShaderManagerClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ShaderManagerClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ShadowShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ShadowShaderClass.obj
@@ -49,3 +53,4 @@ D:\Project Repos\DirectXEngine\DirectXEngine\TransparentShaderClass.cpp;D:\Proje
 D:\Project Repos\DirectXEngine\DirectXEngine\Utils.h;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\Utils.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\ViewpointClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\ViewpointClass.obj
 D:\Project Repos\DirectXEngine\DirectXEngine\WaterShaderClass.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\WaterShaderClass.obj
+D:\Project Repos\DirectXEngine\packages\LodePNG.1.2.0\lib\native\src\lodepng.cpp;D:\Project Repos\DirectXEngine\DirectXEngine\x64\Debug\lodepng.obj

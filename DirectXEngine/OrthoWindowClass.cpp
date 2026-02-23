@@ -69,6 +69,7 @@ bool OrthoWindowClass::InitializeBuffers(ID3D11Device* device, int windowWidth, 
 	HRESULT result;
 	int i;
 
+
 	// Calculate the screen coordinates of the left side of the window.
 	left = (float)((windowWidth / 2) * -1);
 
@@ -92,8 +93,6 @@ bool OrthoWindowClass::InitializeBuffers(ID3D11Device* device, int windowWidth, 
 
 	// Create the index array.
 	indices = new unsigned long[m_indexCount];
-
-
 
 	// Load the vertex array with data.
 	// First triangle.

@@ -4,7 +4,6 @@
 #include "ModelClass.h"
 #include <sstream>
 #include <algorithm>
-#include "Utils.h"
 
 ModelClass::ModelClass()
 {

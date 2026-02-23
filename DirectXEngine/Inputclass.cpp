@@ -95,6 +95,13 @@ bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int
 		return false;
 	}
 
+	POINT pt = { 100, 100 }; // Desired position inside your window
+
+	// Converts (100, 100) from window-space to monitor-space
+	ClientToScreen(hwnd, &pt);
+
+	SetCursorPos(pt.x, pt.y);
+
 	return true;
 }
 
@@ -196,15 +203,29 @@ bool InputClass::ReadMouse()
 void InputClass::ProcessInput()
 {
 	// Update the location of the mouse cursor based on  the change of the mouse location during the frame.
+	//m_mouse->
 	m_mouseX += m_mouseState.lX;
 	m_mouseY += m_mouseState.lY;
 
-	// Ensure the mouse location doesn't exceed the screen width or height.
-	if (m_mouseX < 0) { m_mouseX = 0; }
-	if (m_mouseY < 0) { m_mouseY = 0; }
 
-	if (m_mouseX > m_screenWidth) { m_mouseX = m_screenWidth; }
-	if (m_mouseY > m_screenHeight) { m_mouseY = m_screenHeight; }
+	// Ensure the mouse location doesn't exceed the screen width or height.
+	if (m_mouseX < 0)
+	{
+		m_mouseX = 0;
+	}
+	if (m_mouseY < 0)
+	{
+		m_mouseY = 0;
+	}
+
+	if (m_mouseX > m_screenWidth)
+	{
+		m_mouseX = m_screenWidth;
+	}
+	if (m_mouseY > m_screenHeight)
+	{
+		m_mouseY = m_screenHeight;
+	}
 
 	return;
 }

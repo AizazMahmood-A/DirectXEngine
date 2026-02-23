@@ -7,6 +7,7 @@
 LightClass::LightClass()
 {
     IsOrtho = false;
+    m_depthMap = 0;
 }
 
 
@@ -18,6 +19,26 @@ LightClass::LightClass(const LightClass& other)
 LightClass::~LightClass()
 {
 
+}
+
+bool LightClass::InitializeShadowMaps(HWND hwnd, ID3D11Device* device, int textureWidth, int textureHeight, float screenDepth, float screenNear, int format)
+{
+    // Create and initialize the render to texture object.
+    m_depthMap = new RenderTextureClass;
+
+    bool result = m_depthMap->Initialize(device, textureWidth, textureHeight, screenDepth, screenNear, 1);
+    if (!result)
+    {
+        MessageBox(hwnd, L"Could not initialize the render texture object.", L"Error", MB_OK);
+        return false;
+    }
+
+    return true;
+}
+
+RenderTextureClass* LightClass::GetShadowMap()
+{
+    return m_depthMap;
 }
 
 void LightClass::SetAmbientColor(float red, float green, float blue, float alpha)
@@ -142,7 +163,7 @@ void LightClass::GetProjectionMatrix(XMMATRIX& projectionMatrix)
     return;
 }
 
-void LightClass::GenerateOrthoMatrix(float width, float nearPlane, float depthPlane)
+void LightClass::GenerateOrthoMatrix(float width, float depthPlane, float nearPlane)
 {
 
     // Create the orthographic for the light

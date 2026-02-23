@@ -1,4 +1,4 @@
-
+/*
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: light.ps
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,5 +120,199 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
     return color;
 }
+*/
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Filename: light.ps
+////////////////////////////////////////////////////////////////////////////////
+#define NUM_LIGHTS 2
+/////////////
+// GLOBALS //
+/////////////
+Texture2D colorTexture : register(t0);
+Texture2D normalTexture : register(t1);
+//Texture2D viewDirectionTexture : register(t2);
+Texture2D depthTexture : register(t3);
+
+///////////////////
+// SAMPLE STATES //
+///////////////////
+SamplerState SampleTypePoint : register(s0);
+
+
+//////////////////////
+// CONSTANT BUFFERS //
+//////////////////////
+//cbuffer LightColorBufferType : register(b0)
+//{
+//    float4 diffuseColors[NUM_LIGHTS];
+//    float4 directionalLightColor;
+//};
+
+//cbuffer LightPositionBuffer : register(b1)
+//{
+//    float4 lightPositions[NUM_LIGHTS];
+//    float3 directionalLightDirection;
+//    float padding;
+//    matrix invViewProjection;
+//    matrix viewProjection;
+//};
+
+//cbuffer CameraBuffer : register(b2)
+//{
+//    float3 cameraPosition;
+//    float padding2;
+//};
+
+struct GlobalLightBuffer
+{
+    float4 dirLightDiffuse;
+    float4 dirLightAmbient;
+
+    float3 dirLightDirection;
+    float dirLightIntensity;
+
+    float shadowBias;
+    float3 glPadding;
+};
+
+struct PointLight
+{
+    float4 lightDiffuse;
+
+    float3 lightPosition;
+    float lightIntensity;
+
+    float range;
+    float3 plPadding;
+};
+
+struct SpotLight
+{
+		
+};
+
+cbuffer LightBufferType : register(b0)
+{
+    GlobalLightBuffer globalLightBuffer;
+    PointLight pointLightBuffer[NUM_LIGHTS];
+
+    unsigned int numPointLights;
+    float3 lbPadding;
+};
+
+cbuffer CameraBufferType : register(b1)
+{
+    float3 cameraPosition;
+    float cbPadding;
+
+    matrix invViewProjection;
+    matrix viewProjection;
+};
+//////////////
+// TYPEDEFS //
+//////////////
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+    //float3 viewDirection : TEXCOORD1;
+    //float3 directionalLightDirection : TEXCOORD2;
+    //float3 lightPos[NUM_LIGHTS] : TEXCOORD3;
+};
+
+float4 CalculateDirectionalLight(float3 direction, float3 normal, float3 viewDirection, float4 color, float4 specularColor, float specularPower)
+{
+    float3 lightDir = -normalize(direction); // light to surface direction
+    float NdotL = saturate(dot(normal, lightDir)); // dot product b/w normal and light dir
+
+    float4 diffuse = NdotL * color;
+
+    // specular calculation
+    // Calculate the reflection vector based on the light intensity, normal vector, light direction
+    float3 reflection = normalize(2.0f * NdotL * normal - lightDir);
+
+    // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
+    float4 specular = specularColor * pow(saturate(dot(reflection, viewDirection)), specularPower);
+
+    return diffuse + specular;
+}
+
+float remap(float value, float min1, float max1, float min2, float max2)
+{
+    return (value - min1) / (max1 - min1) * (max2 - min2) + min2;
+}
+
+float3 CalculatePointLight(float4 color, float3 lightPosition, float3 position, float3 normal, float3 viewDir)
+{
+    float range = 10;
+    // Calculate vector from light to surface
+    float3 lightToPixel = lightPosition - position;
+    float dist = length(lightToPixel);
+    float3 lightDir = normalize(lightToPixel);
+    //float attenuation = (1 * 1 / (dist * dist + 1));
+    //float attenuation = 1.0f / (1.0f + 0.1f * dist + 0.01f * dist * dist);
+    float attenuation = saturate(1.0f - (dist / range));
+    // diffuse
+    float NdotL = saturate(dot(normal, lightDir));
+    float3 diffuse = color * NdotL * attenuation;
+    return diffuse;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+
+float4 LightPixelShader(PixelInputType input) : SV_TARGET
+{
+    float4 colors;
+    float4 normals;
+    float3 lightDir;
+
+    float4 outputColor;
+    float3 viewDirection;
+
+    colors = colorTexture.Sample(SampleTypePoint, input.tex);
+    normals = normalize(normalTexture.Sample(SampleTypePoint, input.tex));
+    
+    float depthValue = depthTexture.Sample(SampleTypePoint, input.tex).r;
+    float x = input.tex.x * 2 - 1;
+    float y = (1 - input.tex.y) * 2 - 1;
+    
+    float4 projectedPosition = float4(x, y, depthValue, 1.0f);
+    projectedPosition = mul(projectedPosition, invViewProjection);
+    projectedPosition /= projectedPosition.w;
+    
+    viewDirection = normalize(cameraPosition - projectedPosition.xyz);
+
+    lightDir = globalLightBuffer.dirLightDirection;
+    outputColor = CalculateDirectionalLight(lightDir, normals.xyz, viewDirection, globalLightBuffer.dirLightDiffuse, float4(1.0f, 1.0f, 1.0f, 1.0f), 16.0f);
+           
+    // Initialize the sum of colors.
+    float4 colorSum = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
+    for (int i = 0; i < NUM_LIGHTS; i++)
+    {
+        float3 lightPosition = pointLightBuffer[i].lightPosition.xyz;
+        //-projectedPosition.xyz;
+        float3 pDiffuse = CalculatePointLight(pointLightBuffer[i].lightDiffuse, lightPosition, projectedPosition.xyz, normals.xyz, viewDirection);
+        colorSum = saturate(colorSum + float4(pDiffuse, 1.0f));
+    }
+    //outputColor = saturate(outputColor) * colors;
+    //float3 lightPosition = lightPositions[0].xyz;
+    //float d = distance(lightPositions[0].xyz, projectedPosition.xyz);
+    outputColor = saturate(colorSum + outputColor) * colors;
+    ////TEST///
+    // If your reconstruction is correct, this should look 
+    // like the original scene's colors (Albedo)
+    //float4 worldPos = mul(projectedPosition, invViewProjection);
+    //worldPos /= worldPos.w;
+
+    // Project it BACK to the screen using your standard ViewProjection
+    //float4 testPos = mul(worldPos, viewProjection);
+    //float2 testUV = (testPos.xy / testPos.w) * 0.5 + 0.5;
+    //testUV.y = 1 - testUV.y;
+
+    return outputColor;
+}
