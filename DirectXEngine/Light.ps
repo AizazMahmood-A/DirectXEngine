@@ -126,44 +126,20 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: light.ps
 ////////////////////////////////////////////////////////////////////////////////
-#define NUM_LIGHTS 2
+#define NUM_LIGHTS 4
 /////////////
 // GLOBALS //
 /////////////
 Texture2D colorTexture : register(t0);
 Texture2D normalTexture : register(t1);
-//Texture2D viewDirectionTexture : register(t2);
+Texture2D positionTexture : register(t2);
 Texture2D depthTexture : register(t3);
+Texture2DArray shadowMaps : register(t4);
 
 ///////////////////
 // SAMPLE STATES //
 ///////////////////
 SamplerState SampleTypePoint : register(s0);
-
-
-//////////////////////
-// CONSTANT BUFFERS //
-//////////////////////
-//cbuffer LightColorBufferType : register(b0)
-//{
-//    float4 diffuseColors[NUM_LIGHTS];
-//    float4 directionalLightColor;
-//};
-
-//cbuffer LightPositionBuffer : register(b1)
-//{
-//    float4 lightPositions[NUM_LIGHTS];
-//    float3 directionalLightDirection;
-//    float padding;
-//    matrix invViewProjection;
-//    matrix viewProjection;
-//};
-
-//cbuffer CameraBuffer : register(b2)
-//{
-//    float3 cameraPosition;
-//    float padding2;
-//};
 
 struct GlobalLightBuffer
 {
@@ -244,9 +220,9 @@ float remap(float value, float min1, float max1, float min2, float max2)
     return (value - min1) / (max1 - min1) * (max2 - min2) + min2;
 }
 
-float3 CalculatePointLight(float4 color, float3 lightPosition, float3 position, float3 normal, float3 viewDir)
+float3 CalculatePointLight(float4 color, float3 lightPosition, float3 position, float3 normal, float3 viewDir, float3 uvw)
 {
-    float range = 10;
+    float range = 30;
     // Calculate vector from light to surface
     float3 lightToPixel = lightPosition - position;
     float dist = length(lightToPixel);
@@ -257,7 +233,17 @@ float3 CalculatePointLight(float4 color, float3 lightPosition, float3 position, 
     // diffuse
     float NdotL = saturate(dot(normal, lightDir));
     float3 diffuse = color * NdotL * attenuation;
-    return diffuse;
+    
+    //float intensity = saturate(dot(normals.xyz, pointLightBuffer[i].lightPosition.xyz));
+    float4 pos = positionTexture.Sample(SampleTypePoint, uvw.xy);
+    //float2 projectTexCoord;
+    //projectTexCoord.x = pos.x / pos.w / 2.0f + 0.5f;
+    //projectTexCoord.y = -pos.y / pos.w / 2.0f + 0.5f;
+    float4 shadowMapColor = shadowMaps.Sample(SampleTypePoint, uvw);
+    //float3 shadowsAndDiffuse = saturate(intensity * shadowMapColor.xyz);
+    //shadowsAndDiffuse = shadowsAndDiffuse * pDiffuse;
+    
+    return shadowMapColor * NdotL * color * attenuation;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -270,7 +256,6 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 normals;
     float3 lightDir;
 
-    float4 outputColor;
     float3 viewDirection;
 
     colors = colorTexture.Sample(SampleTypePoint, input.tex);
@@ -286,33 +271,35 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     
     viewDirection = normalize(cameraPosition - projectedPosition.xyz);
 
+    float4 dirLightColor;
     lightDir = globalLightBuffer.dirLightDirection;
-    outputColor = CalculateDirectionalLight(lightDir, normals.xyz, viewDirection, globalLightBuffer.dirLightDiffuse, float4(1.0f, 1.0f, 1.0f, 1.0f), 16.0f);
+    dirLightColor = CalculateDirectionalLight(lightDir, normals.xyz, viewDirection, globalLightBuffer.dirLightDiffuse, float4(1.0f, 1.0f, 1.0f, 1.0f), 16.0f);
            
     // Initialize the sum of colors.
-    float4 colorSum = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 pointLightColorSum = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
     for (int i = 0; i < NUM_LIGHTS; i++)
     {
         float3 lightPosition = pointLightBuffer[i].lightPosition.xyz;
         //-projectedPosition.xyz;
-        float3 pDiffuse = CalculatePointLight(pointLightBuffer[i].lightDiffuse, lightPosition, projectedPosition.xyz, normals.xyz, viewDirection);
-        colorSum = saturate(colorSum + float4(pDiffuse, 1.0f));
+        float3 pDiffuse = CalculatePointLight(pointLightBuffer[i].lightDiffuse, lightPosition, projectedPosition.xyz, normals.xyz, viewDirection, float3(input.tex, i));
+        
+
+        pointLightColorSum = saturate(pointLightColorSum + float4(pDiffuse, 1.0f));
     }
-    //outputColor = saturate(outputColor) * colors;
-    //float3 lightPosition = lightPositions[0].xyz;
-    //float d = distance(lightPositions[0].xyz, projectedPosition.xyz);
-    outputColor = saturate(colorSum + outputColor) * colors;
+    
+    float4 outputColor;
+    outputColor = saturate(pointLightColorSum + dirLightColor) * colors;
+    
+    //outputColor = saturate(outputColor );
+    return outputColor;
+}
+
     ////TEST///
-    // If your reconstruction is correct, this should look 
-    // like the original scene's colors (Albedo)
+
     //float4 worldPos = mul(projectedPosition, invViewProjection);
     //worldPos /= worldPos.w;
 
-    // Project it BACK to the screen using your standard ViewProjection
     //float4 testPos = mul(worldPos, viewProjection);
     //float2 testUV = (testPos.xy / testPos.w) * 0.5 + 0.5;
     //testUV.y = 1 - testUV.y;
-
-    return outputColor;
-}

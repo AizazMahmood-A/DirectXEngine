@@ -43,7 +43,7 @@ float4 ShadowPixelShader(PixelInputType input) : SV_TARGET
     float depthValue;
     float lightDepthValue;
     float lightIntensity;
-
+    //return depthValue = depthMapTexture.Sample(SampleTypeClamp, input.tex);
     // Set the default output color to be black (shadow).
     color = float4(0.0f, 0.0f, 0.0f, 1.0f);
 

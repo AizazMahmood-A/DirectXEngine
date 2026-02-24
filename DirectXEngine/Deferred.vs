@@ -28,8 +28,7 @@ struct PixelInputType
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
-    float3 viewDirection : TEXCOORD1;
-    float4 depthPosition : TEXCOORD2;
+    float4 depthPosition : TEXCOORD1;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,8 +58,8 @@ PixelInputType DeferredVertexShader(VertexInputType input)
     // Normalize the normal vector.
     output.normal = normalize(output.normal);
     
-    output.viewDirection = float3(0.0f, 0.0f, -10.0f) - mul(input.position, worldMatrix).xyz;
-    output.viewDirection = normalize(output.viewDirection);
+    //output.viewDirection = float3(0.0f, 0.0f, -10.0f) - mul(input.position, worldMatrix).xyz;
+    //output.viewDirection = normalize(output.viewDirection);
 
     return output;
 }

@@ -118,7 +118,7 @@ private:
 	SpriteClass* m_Sprite;
 	TimerClass* m_Timer;
 
-	LightClass* m_DirectionalLight;
+	//LightClass* m_DirectionalLight;
 
 	ModelClass** m_Models;
 	size_t m_modelCount;

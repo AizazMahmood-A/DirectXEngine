@@ -17,7 +17,7 @@ ApplicationClass::ApplicationClass()
 	m_Sprite = 0;
 	m_Timer = 0;
 
-	m_DirectionalLight = 0;
+	//m_DirectionalLight = 0;
 
 	m_Models = 0;
 	m_modelCount = 0;
@@ -101,27 +101,27 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera = new CameraClass;
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -1.0f);
 	m_Camera->Render();
 	m_Camera->RenderBaseViewMatrix();
 	m_Camera->GetBaseViewMatrix(m_baseViewMatrix);
 
-	m_Camera->SetRotation(35.0f, 0.0f, 0.0f);
-	m_Camera->SetPosition(0.0f, 8.0f, -25.0f);
+	m_Camera->SetRotation(20.0f, 0.0f, 0.0f);
+	m_Camera->SetPosition(0.0f, 5.0f, -20.0f);
 	//m_Camera->SetRotation(20.0f, 0.0f, 0.0f);
 	m_Camera->Render();
 	//m_Camera->SetPosition(0.0f, 0.0f, 0.0f);
 
 	// Create and initialize the light object.
-	m_DirectionalLight = new LightClass;
+	//m_DirectionalLight = new LightClass;
 
-	m_DirectionalLight->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	m_DirectionalLight->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	m_DirectionalLight->SetDirection(0.0f, -1.0f, 0.5f);
-	m_DirectionalLight->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	m_DirectionalLight->SetSpecularPower(16.0f);
-	m_DirectionalLight->SetLookAt(0.0f, 0.0f, 0.0f);
-	m_DirectionalLight->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+	//m_DirectionalLight->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	//m_DirectionalLight->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//m_DirectionalLight->SetDirection(0.0f, -1.0f, 0.5f);
+	//m_DirectionalLight->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//m_DirectionalLight->SetSpecularPower(16.0f);
+	//m_DirectionalLight->SetLookAt(0.0f, 0.0f, 0.0f);
+	//m_DirectionalLight->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
 	// Set the number of lights we will use.
 	m_numLights = 5;
@@ -420,7 +420,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	light->InitializeShadowMaps(hwnd, m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
 	light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	light->SetDiffuseColor(0.2f, 0.2f, 0.75f, 1.0f);
-	light->SetPosition(0, 1.0f, -5.0f);
+	light->SetPosition(0, 1.0f, -10.0f);
 	light->SetLookAt(0.0f, 0.0f, 0.0f);
 	light->GenerateViewMatrix();
 	light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
@@ -439,8 +439,8 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	light = new LightClass;
 	light->InitializeShadowMaps(hwnd, m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
 	light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	light->SetDiffuseColor(1.0f, 1.0f, 0.78f, 1.0f);
-	light->SetPosition(-5.0f, 3.0f, 5.0f);
+	light->SetDiffuseColor(1.0f, 0.0f, 0.08f, 1.0f);
+	light->SetPosition(-10.0f, 1.0f, 10.0f);
 	light->SetLookAt(0.0f, 0.0f, 0.0f);
 	light->GenerateViewMatrix();
 	light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
@@ -450,7 +450,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	light->InitializeShadowMaps(hwnd, m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR, 1);
 	light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	light->SetDiffuseColor(1.0f, 1.0f, 0.78f, 1.0f);
-	light->SetPosition(12.0f, 1.0f, -5.0f);
+	light->SetPosition(5.0f, 1.0f, -10.0f);
 	light->SetLookAt(0.0f, 0.0f, 0.0f);
 	light->GenerateViewMatrix();
 	light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
@@ -706,11 +706,11 @@ void ApplicationClass::Shutdown()
 	}
 
 	// Release the light object.
-	if (m_DirectionalLight)
-	{
-		delete m_DirectionalLight;
-		m_DirectionalLight = 0;
-	}
+	//if (m_DirectionalLight)
+	//{
+	//	delete m_DirectionalLight;
+	//	m_DirectionalLight = 0;
+	//}
 
 	// Release the model object.
 	if (m_Model)
@@ -907,7 +907,7 @@ bool ApplicationClass::RenderDepthToTexture(RenderTextureClass* renderTexture, L
 	// Setup the translation matrix for the tree model.
 	translateMatrix = XMMatrixTranslation(0.0f, -1.0f, -5.0f);
 	translateMatrix = ApplyTransformations(translateMatrix,
-		XMMatrixScaling(3.0f, 3.0f, 3.0f), 
+		XMMatrixScaling(12.0f, 3.0f, 12.0f), 
 		XMMatrixRotationX(0.0f));
 
 	// Render the tree trunk model using the depth shader.
@@ -966,7 +966,7 @@ bool ApplicationClass::RenderBlackAndWhiteShadows(RenderTextureArrayClass* black
 	// Setup the translation matrix for the tree model.
 	translateMatrix = XMMatrixTranslation(0.0f, -1.0f, -5.0f);
 	translateMatrix = ApplyTransformations(translateMatrix,
-		XMMatrixScaling(3.0f, 3.0f, 3.0f),
+		XMMatrixScaling(12.0f, 3.0f, 12.0f),
 		XMMatrixRotationX(0.0f));
 
 	// Render the tree trunk model using the depth shader.
@@ -1082,7 +1082,7 @@ bool ApplicationClass::RenderSceneDeferredBuffer(float rotation)
 	m_Direct3D->GetProjectionMatrix(projectionMatrix);
 
 	worldMatrix = XMMatrixTranslation(0.0f, -1.0f, -5.0f);
-	worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(3.0f, 3.0f, 3.0f), XMMatrixRotationX(0.0f));
+	worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(12.0f, 3.0f, 12.0f), XMMatrixRotationX(0.0f));
 
 	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
 	result = m_DeferredShader->Render(m_Direct3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,

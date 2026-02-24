@@ -673,13 +673,13 @@ bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX orthoMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView* colorTexture,
-	ID3D11ShaderResourceView* normalTexture, ID3D11ShaderResourceView* viewDirection, ID3D11ShaderResourceView* depthTexture,
+	ID3D11ShaderResourceView* normalTexture, ID3D11ShaderResourceView* positionTexture, ID3D11ShaderResourceView* depthTexture,
 	LightData* lightData, CameraClass* camera)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, orthoMatrix, projectionMatrix, colorTexture, normalTexture, viewDirection, depthTexture,
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, orthoMatrix, projectionMatrix, colorTexture, normalTexture, positionTexture, depthTexture,
 		lightData, camera);
 	if (!result)
 	{
@@ -1214,7 +1214,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX orthoMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView* colorTexture,
-	ID3D11ShaderResourceView* normalTexture, ID3D11ShaderResourceView* viewDirection, ID3D11ShaderResourceView* depthTexture,
+	ID3D11ShaderResourceView* normalTexture, ID3D11ShaderResourceView* positionTexture, ID3D11ShaderResourceView* depthTexture,
 	LightData* lightData, CameraClass* camera)
 {
 	HRESULT result;
@@ -1272,7 +1272,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Set shader texture resources in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &colorTexture);
 	deviceContext->PSSetShaderResources(1, 1, &normalTexture);
-	deviceContext->PSSetShaderResources(2, 1, &viewDirection);
+	deviceContext->PSSetShaderResources(2, 1, &positionTexture);
 	deviceContext->PSSetShaderResources(3, 1, &depthTexture);
 	deviceContext->PSSetShaderResources(4, 1, &shadowTextures);
 
