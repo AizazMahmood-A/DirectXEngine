@@ -35,9 +35,13 @@ public:
 
     bool IsEscapePressed();
     void GetMouseLocation(int&, int&);
-    bool IsMousePressed();
+    void GetMouseDelta(int& mouseX, int& mouseY);
+    bool IsLeftMousePressed();
+    bool IsRightMousePressed();
     bool IsLeftArrowPressed();
     bool IsRightArrowPressed();
+
+    bool IsKeyPressed(unsigned char i);
 
 private:
     bool ReadKeyboard();
@@ -52,6 +56,6 @@ private:
     unsigned char m_keyboardState[256];
     DIMOUSESTATE m_mouseState;
 
-    int m_screenWidth, m_screenHeight, m_mouseX, m_mouseY;
+    int m_screenWidth, m_screenHeight, m_mouseX, m_mouseY, m_mouseDx, m_mouseDy;
 };
 #endif

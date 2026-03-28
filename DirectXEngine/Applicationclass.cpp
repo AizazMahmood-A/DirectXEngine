@@ -789,17 +789,55 @@ bool ApplicationClass::Frame(InputClass* Input)
 		return false;
 	}
 
-	// Get the location of the mouse from the input object.
-	Input->GetMouseLocation(mouseX, mouseY);
-
-	// Update the location of the mouse cursor on th screen.
-	m_MouseBitmap->SetRenderLocation(mouseX, mouseY);
-
-	// Update the system stats.
 	m_Timer->Frame();
-
-	// Get the current frame time.
 	frameTime = m_Timer->GetTime();
+
+	int dx, dy;
+	Input->GetMouseDelta(dx, dy);
+
+	if (Input->IsRightMousePressed())
+	{
+		cout << dx << ", " << dy << "\n";
+		XMFLOAT3 cameraRot = m_Camera->GetRotation();
+		cameraRot.x += dy * 80 * frameTime;
+		cameraRot.y += dx * 80 * frameTime;
+		m_Camera->SetRotation(cameraRot.x, cameraRot.y, cameraRot.z);
+	}
+
+	XMVECTOR camPos;
+	m_Camera->GetPosition(camPos);
+
+	if (Input->IsKeyPressed(DIKEYBOARD_W))
+	{
+		camPos += m_Camera->GetForwardVector() * frameTime * 80.0f;
+	}
+	if (Input->IsKeyPressed(DIKEYBOARD_A))
+	{
+		camPos -= m_Camera->GetRightVector() * frameTime * 80.0f;
+	}
+	if (Input->IsKeyPressed(DIKEYBOARD_S))
+	{
+		camPos -= m_Camera->GetForwardVector() * frameTime * 80.0f;
+	}
+	if (Input->IsKeyPressed(DIKEYBOARD_D))
+	{
+		camPos += m_Camera->GetRightVector() * frameTime * 80.0f;
+	}
+	if (Input->IsKeyPressed(DIKEYBOARD_E))
+	{
+		camPos += m_Camera->GetUpVector() * frameTime * 80.0f;
+	}
+	if (Input->IsKeyPressed(DIKEYBOARD_Q))
+	{
+		camPos -= m_Camera->GetUpVector() * frameTime * 80.0f;
+	}
+	XMFLOAT3 updatedPos;
+	XMStoreFloat3(&updatedPos, camPos);
+	m_Camera->SetPosition(updatedPos.x, updatedPos.y, updatedPos.z);
+	m_Camera->Render();
+
+	Input->GetMouseLocation(mouseX, mouseY);
+	m_MouseBitmap->SetRenderLocation(mouseX, mouseY);
 
 	// Update the frame per second each frame.
 	result = UpdateFPS();
@@ -907,7 +945,7 @@ bool ApplicationClass::RenderDepthToTexture(RenderTextureClass* renderTexture, L
 	// Setup the translation matrix for the tree model.
 	translateMatrix = XMMatrixTranslation(0.0f, -1.0f, -5.0f);
 	translateMatrix = ApplyTransformations(translateMatrix,
-		XMMatrixScaling(12.0f, 3.0f, 12.0f), 
+		XMMatrixScaling(12.0f, 3.0f, 12.0f),
 		XMMatrixRotationX(0.0f));
 
 	// Render the tree trunk model using the depth shader.
@@ -1091,7 +1129,7 @@ bool ApplicationClass::RenderSceneDeferredBuffer(float rotation)
 	{
 		return false;
 	}
-	
+
 	worldMatrix = XMMatrixTranslation(0.0f, 0.0f, -5.0f);
 	worldMatrix = ApplyTransformations(worldMatrix, XMMatrixScaling(1.020f, 1.020f, 1.020f), XMMatrixRotationY(rotation));
 
@@ -1102,11 +1140,11 @@ bool ApplicationClass::RenderSceneDeferredBuffer(float rotation)
 	{
 		return false;
 	}
-	
+
 	// Reset the render target back to the original back buffer and not the render buffers anymore.  And reset the viewport back to the original.
 	m_Direct3D->SetBackBufferRenderTarget();
 	m_Direct3D->ResetViewport();
-	
+
 	return true;
 }
 
@@ -1250,10 +1288,10 @@ bool ApplicationClass::Render()
 	m_FullScreenWindow->Render(m_Direct3D->GetDeviceContext());
 
 	// Render the full screen ortho window using the deferred light shader and the render buffers.
-	result = m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_FullScreenWindow->GetIndexCount(), 
+	result = m_LightShader->Render(m_Direct3D->GetDeviceContext(), m_FullScreenWindow->GetIndexCount(),
 		worldMatrix, m_baseViewMatrix, orthoMatrix, projectionMatrix,
-		m_DeferredBuffers->GetShaderResourceView(0), 
-		m_DeferredBuffers->GetShaderResourceView(1), 
+		m_DeferredBuffers->GetShaderResourceView(0),
+		m_DeferredBuffers->GetShaderResourceView(1),
 		m_DeferredBuffers->GetShaderResourceView(2),
 		m_DeferredBuffers->GetShaderResourceView(3),
 		m_LightData, m_Camera);

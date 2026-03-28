@@ -81,6 +81,18 @@ bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int
 		return false;
 	}
 
+	//DIPROPDWORD w;
+	//w.diph.dwSize = sizeof(DIPROPDWORD);
+	//w.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+	//w.diph.dwObj = 0;
+	//w.diph.dwHow = DIPH_DEVICE;
+	//w.dwData = DIPROPAXISMODE_ABS;
+	//result = m_mouse->SetProperty(DIPROP_AXISMODE, &w.diph);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+
 	// Set the cooperative level of the mouse to share with other programs.
 	result = m_mouse->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	if (FAILED(result))
@@ -95,7 +107,7 @@ bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int
 		return false;
 	}
 
-	POINT pt = { 100, 100 }; // Desired position inside your window
+	POINT pt = { 0, 0 }; // Desired position inside your window
 
 	// Converts (100, 100) from window-space to monitor-space
 	ClientToScreen(hwnd, &pt);
@@ -204,28 +216,31 @@ void InputClass::ProcessInput()
 {
 	// Update the location of the mouse cursor based on  the change of the mouse location during the frame.
 	//m_mouse->
+	m_mouseDx = m_mouseState.lX;
+	m_mouseDy = m_mouseState.lY;
+
 	m_mouseX += m_mouseState.lX;
 	m_mouseY += m_mouseState.lY;
 
 
 	// Ensure the mouse location doesn't exceed the screen width or height.
-	if (m_mouseX < 0)
-	{
-		m_mouseX = 0;
-	}
-	if (m_mouseY < 0)
-	{
-		m_mouseY = 0;
-	}
+	//if (m_mouseX < 0)
+	//{
+	//	m_mouseX = 0;
+	//}
+	//if (m_mouseY < 0)
+	//{
+	//	m_mouseY = 0;
+	//}
 
-	if (m_mouseX > m_screenWidth)
-	{
-		m_mouseX = m_screenWidth;
-	}
-	if (m_mouseY > m_screenHeight)
-	{
-		m_mouseY = m_screenHeight;
-	}
+	//if (m_mouseX > m_screenWidth)
+	//{
+	//	m_mouseX = m_screenWidth;
+	//}
+	//if (m_mouseY > m_screenHeight)
+	//{
+	//	m_mouseY = m_screenHeight;
+	//}
 
 	return;
 }
@@ -267,12 +282,39 @@ void InputClass::GetMouseLocation(int& mouseX, int& mouseY)
 	return;
 }
 
-bool InputClass::IsMousePressed()
+void InputClass::GetMouseDelta(int& mouseX, int& mouseY)
+{
+	mouseX = m_mouseDx;
+	mouseY = m_mouseDy;
+	return;
+}
+
+bool InputClass::IsLeftMousePressed()
 {
 	// Check the left mouse button state.
 	if (m_mouseState.rgbButtons[0] & 0x80)
 	{
 		return true;
 	}
+	return false;
+}
+
+bool InputClass::IsRightMousePressed()
+{
+	// Check the left mouse button state.
+	if (m_mouseState.rgbButtons[1] & 0x80)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool InputClass::IsKeyPressed(unsigned char i)
+{
+	if (m_keyboardState[i] & 0x80)
+	{
+		return true;
+	}
+
 	return false;
 }
